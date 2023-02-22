@@ -1,5 +1,6 @@
 package com.example.symmetricalcomponents
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
@@ -14,8 +15,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var graph: GraphView
     private lateinit var viewport: Viewport
     private lateinit var button: Button
-    val x = mutableListOf(0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
-    val y = mutableListOf(0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
+    private val x = mutableListOf(0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
+    private val y = mutableListOf(0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity() {
         button = findViewById(R.id.resetButton)
         graph = findViewById(R.id.graph)
         series = LineGraphSeries()
+        series.isDrawDataPoints = true
+        series.color = Color.RED
         graph.addSeries(series)
 
         button.setOnClickListener {
@@ -34,18 +37,20 @@ class MainActivity : AppCompatActivity() {
         makeGraph()
     }
 
-    fun makeGraph() {
+    private fun makeGraph() {
         // Give x and y axes their range
         viewport = graph.viewport
         graph.gridLabelRenderer.setHumanRounding(false)
         viewport.isYAxisBoundsManual = true
+        viewport.isXAxisBoundsManual = true
         viewport.setMinX(0.0)
         viewport.setMaxX(100.0)
         viewport.setMinY(0.0)
         viewport.setMaxY(100.0)
-        viewport.isScrollable = true
+        /*viewport.isScrollable = true
+        viewport.setScrollableY(true)*/
 
-        val staticLabelsFormatter   = StaticLabelsFormatter(graph)
+        val staticLabelsFormatter = StaticLabelsFormatter(graph)
         staticLabelsFormatter.setHorizontalLabels(
             arrayOf(
                 "0",
@@ -84,7 +89,7 @@ class MainActivity : AppCompatActivity() {
                     x[i],
                     y.shuffled()[i]
                 ),
-                true,
+                false,
                 100
             )
         }
