@@ -1,22 +1,28 @@
 package com.example.symmetricalcomponents
 
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
-import com.jjoe64.graphview.series.LineGraphSeries
+import com.jjoe64.graphview.series.OnDataPointTapListener
+import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
+
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var series: LineGraphSeries<DataPoint>
+    private lateinit var series1: LineGraphSeries1<DataPoint>
+    private lateinit var series2: LineGraphSeries1<DataPoint>
+    private lateinit var series3: LineGraphSeries1<DataPoint>
+    private lateinit var series4: LineGraphSeries1<DataPoint>
     private lateinit var graph: GraphView
     private lateinit var viewport: Viewport
     private lateinit var button: Button
-    private val x = mutableListOf(0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
-    private val y = mutableListOf(0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
+    private val x = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
+    private val y = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,14 +30,68 @@ class MainActivity : AppCompatActivity() {
 
         button = findViewById(R.id.resetButton)
         graph = findViewById(R.id.graph)
-        series = LineGraphSeries()
-        series.isDrawDataPoints = true
-        series.color = Color.RED
-        graph.addSeries(series)
+
+        series1 = LineGraphSeries1()
+        series1.isDrawDataPoints = true
+        series1.color = Color.RED
+        series1.setOnDataPointTapListener(OnDataPointTapListener { _, dataPoint ->
+            Toast.makeText(
+                applicationContext,
+                "Series1: On Data Point clicked: $dataPoint",
+                Toast.LENGTH_SHORT
+            ).show()
+        })
+
+        series2 = LineGraphSeries1()
+        series2.isDrawDataPoints = false
+        series2.color = Color.GREEN
+        series2.appendData(
+            DataPoint(0.0,0.0),
+            false,
+            100
+        )
+        series2.appendData(
+            DataPoint(50.0,50.0),
+            false,
+            100
+        )
+
+        series3 = LineGraphSeries1()
+        series3.isDrawDataPoints = false
+        series3.color = Color.BLUE
+        series3.appendData(
+            DataPoint(-50.0,-50.0),
+            false,
+            100
+        )
+        series3.appendData(
+            DataPoint(0.0, 0.0),
+            false,
+            100
+        )
+
+        series4 = LineGraphSeries1()
+        series4.isDrawDataPoints = false
+        series4.color = Color.RED
+        series4.appendData(
+            DataPoint(-60.0,0.0),
+            false,
+            100
+        )
+        series4.appendData(
+            DataPoint(0.0,0.0),
+            false,
+            100
+        )
+
+        graph.addSeries(series1)
+        /*graph.addSeries(series2)
+        graph.addSeries(series3)
+        graph.addSeries(series4)*/
 
         button.setOnClickListener {
             // Resets the series to clear previous graph
-            series.resetData(arrayOf(DataPoint(0.0, 0.0)))
+            series1.resetData(arrayOf(DataPoint(viewport.getMinX(true), viewport.getMinY(true))))
             makeGraph(false)
         }
         makeGraph(true)
@@ -43,9 +103,9 @@ class MainActivity : AppCompatActivity() {
         graph.gridLabelRenderer.setHumanRounding(false)
         viewport.isYAxisBoundsManual = true
         viewport.isXAxisBoundsManual = true
-        viewport.setMinX(0.0)
+        viewport.setMinX(-100.0)
         viewport.setMaxX(100.0)
-        viewport.setMinY(0.0)
+        viewport.setMinY(-100.0)
         viewport.setMaxY(100.0)
         /*viewport.isScrollable = true
         viewport.setScrollableY(true)*/
@@ -53,31 +113,31 @@ class MainActivity : AppCompatActivity() {
         val staticLabelsFormatter = StaticLabelsFormatter(graph)
         staticLabelsFormatter.setHorizontalLabels(
             arrayOf(
+                "-100",
+                "-80",
+                "-60",
+                "-40",
+                "-20",
                 "0",
-                "10",
                 "20",
-                "30",
                 "40",
-                "50",
                 "60",
-                "70",
                 "80",
-                "90",
                 "100"
             )
         )
         staticLabelsFormatter.setVerticalLabels(
             arrayOf(
+                "-100",
+                "-80",
+                "-60",
+                "-40",
+                "-20",
                 "0",
-                "10",
                 "20",
-                "30",
                 "40",
-                "50",
                 "60",
-                "70",
                 "80",
-                "90",
                 "100"
             )
         )
@@ -93,7 +153,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun appendSeriesData(value: Int) {
         for (i in value until x.size) {
-            series.appendData(
+            series1.appendData(
                 DataPoint(
                     x[i],
                     y.shuffled()[i]
