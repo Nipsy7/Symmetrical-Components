@@ -32,12 +32,12 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener {
             // Resets the series to clear previous graph
             series.resetData(arrayOf(DataPoint(0.0, 0.0)))
-            makeGraph()
+            makeGraph(false)
         }
-        makeGraph()
+        makeGraph(true)
     }
 
-    private fun makeGraph() {
+    private fun makeGraph(appStart: Boolean) {
         // Give x and y axes their range
         viewport = graph.viewport
         graph.gridLabelRenderer.setHumanRounding(false)
@@ -82,8 +82,17 @@ class MainActivity : AppCompatActivity() {
             )
         )
 
+        if (appStart){
+            appendSeriesData(0)
+        }
+        else{
+            appendSeriesData(1)
+        }
 
-        for (i in 0 until x.size) {
+    }
+
+    private fun appendSeriesData(value: Int) {
+        for (i in value until x.size) {
             series.appendData(
                 DataPoint(
                     x[i],
