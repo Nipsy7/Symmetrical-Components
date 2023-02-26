@@ -2,6 +2,7 @@ package com.example.symmetricalcomponents
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,8 +17,6 @@ import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
 class MainActivity : AppCompatActivity() {
     private lateinit var series1: LineGraphSeries1<DataPoint>
     private lateinit var series2: LineGraphSeries1<DataPoint>
-    private lateinit var series3: LineGraphSeries1<DataPoint>
-    private lateinit var series4: LineGraphSeries1<DataPoint>
     private lateinit var graph: GraphView
     private lateinit var viewport: Viewport
     private lateinit var button: Button
@@ -34,13 +33,6 @@ class MainActivity : AppCompatActivity() {
         series1 = LineGraphSeries1()
         series1.isDrawDataPoints = true
         series1.color = Color.RED
-        series1.setOnDataPointTapListener(OnDataPointTapListener { _, dataPoint ->
-            Toast.makeText(
-                applicationContext,
-                "Series1: On Data Point clicked: $dataPoint",
-                Toast.LENGTH_SHORT
-            ).show()
-        })
 
         series2 = LineGraphSeries1()
         series2.isDrawDataPoints = false
@@ -56,38 +48,8 @@ class MainActivity : AppCompatActivity() {
             100
         )
 
-        series3 = LineGraphSeries1()
-        series3.isDrawDataPoints = false
-        series3.color = Color.BLUE
-        series3.appendData(
-            DataPoint(-50.0,-50.0),
-            false,
-            100
-        )
-        series3.appendData(
-            DataPoint(0.0, 0.0),
-            false,
-            100
-        )
-
-        series4 = LineGraphSeries1()
-        series4.isDrawDataPoints = false
-        series4.color = Color.RED
-        series4.appendData(
-            DataPoint(-60.0,0.0),
-            false,
-            100
-        )
-        series4.appendData(
-            DataPoint(0.0,0.0),
-            false,
-            100
-        )
-
         graph.addSeries(series1)
-        /*graph.addSeries(series2)
-        graph.addSeries(series3)
-        graph.addSeries(series4)*/
+        graph.addSeries(series2)
 
         button.setOnClickListener {
             // Resets the series to clear previous graph
@@ -95,6 +57,19 @@ class MainActivity : AppCompatActivity() {
             makeGraph(false)
         }
         makeGraph(true)
+    }
+
+    override fun onTouchEvent(event: MotionEvent): Boolean {
+        val x = event.x.toInt()
+        val y = event.y.toInt()
+
+        Toast.makeText(
+            applicationContext,
+            "click location: $x, $y",
+            Toast.LENGTH_SHORT
+        ).show()
+
+        return false
     }
 
     private fun makeGraph(appStart: Boolean) {
