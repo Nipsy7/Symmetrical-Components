@@ -1,5 +1,6 @@
 package com.example.symmetricalcomponents
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.view.MotionEvent
@@ -23,6 +24,12 @@ class MainActivity : AppCompatActivity() {
     private val x = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
     private val y = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
 
+    private lateinit var previousGraphPoint: DataPoint
+
+    private var previousX: Double = 0.0
+    private var previousY: Double = 0.0
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,8 +55,44 @@ class MainActivity : AppCompatActivity() {
             100
         )
 
+        previousGraphPoint = DataPoint(50.0,50.0)
+
         graph.addSeries(series1)
         graph.addSeries(series2)
+
+        /*var activeSeries: LineGraphSeries1<DataPoint>? = null
+        series2.setOnDataPointTapListener(OnDataPointTapListener { _, _ ->
+            activeSeries = series2
+        })*/
+
+        graph.setOnTouchListener { v, event ->
+
+            val x: Float = event.x
+            val y: Float = event.y
+
+            when (event?.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    var dx: Double = x - previousX
+                    var dy: Double = y - previousY
+
+                    dx*=0.2
+                    dy*=0.2
+
+                    val values = arrayOf(DataPoint(0.0,0.0), DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy))
+                    previousGraphPoint = DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy)
+
+                    if (values[0].x > values[1].x) {
+                        series2.resetData(arrayOf(values[1], values[0]))
+                    }
+                    else {
+                        series2.resetData(arrayOf(values[0], values[1]))
+                    }
+                }
+            }
+            previousX = x.toDouble()
+            previousY = y.toDouble()
+            v?.onTouchEvent(event) ?: true
+        }
 
         button.setOnClickListener {
             // Resets the series to clear previous graph
@@ -59,18 +102,35 @@ class MainActivity : AppCompatActivity() {
         makeGraph(true)
     }
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        val x = event.x.toInt()
-        val y = event.y.toInt()
 
-        Toast.makeText(
-            applicationContext,
-            "click location: $x, $y",
-            Toast.LENGTH_SHORT
-        ).show()
 
-        return false
-    }
+    /*override fun onTouchEvent(event: MotionEvent): Boolean {
+        val x: Float = event.x
+        val y: Float = event.y
+
+        when (event.action) {
+            MotionEvent.ACTION_MOVE -> {
+
+                var dx: Double = x - previousX
+                var dy: Double = y - previousY
+
+                val values = arrayOf(DataPoint(0.0,0.0), DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy))
+                previousGraphPoint = DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy)
+
+                if (values[0].x > values[1].x) {
+                    series2.resetData(arrayOf(values[1], values[0]))
+                }
+                else {
+                    series2.resetData(arrayOf(values[0], values[1]))
+                }
+
+            }
+        }
+
+        previousX = x.toDouble()
+        previousY = y.toDouble()
+        return true
+    }*/
 
     private fun makeGraph(appStart: Boolean) {
         // Give x and y axes their range
@@ -138,4 +198,5 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
 }
