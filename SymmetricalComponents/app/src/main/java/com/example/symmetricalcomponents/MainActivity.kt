@@ -2,6 +2,7 @@ package com.example.symmetricalcomponents
 
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        button = findViewById(R.id.resetButton)
+        //button = findViewById(R.id.resetButton)
         graph = findViewById(R.id.graph)
 
         series1 = LineGraphSeries1()
@@ -48,28 +49,45 @@ class MainActivity : AppCompatActivity() {
             100
         )
 
-        graph.addSeries(series1)
+        //graph.addSeries(series1)
         graph.addSeries(series2)
 
-        button.setOnClickListener {
+        /*button.setOnClickListener {
             // Resets the series to clear previous graph
             series1.resetData(arrayOf(DataPoint(viewport.getMinX(true), viewport.getMinY(true))))
             makeGraph(false)
-        }
+        }*/
         makeGraph(true)
     }
 
+    private var previousX: Double = 0.0
+    private var previousY: Double = 0.0
+
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val x = event.x.toInt()
-        val y = event.y.toInt()
+        val x: Float = event.x
+        val y: Float = event.y
 
-        Toast.makeText(
-            applicationContext,
-            "click location: $x, $y",
-            Toast.LENGTH_SHORT
-        ).show()
+        when (event.action) {
+            MotionEvent.ACTION_MOVE -> {
 
-        return false
+                var dx: Double = x - previousX
+                var dy: Double = y - previousY
+
+                val values = arrayOf(DataPoint(0.0,0.0), DataPoint(dx, -dy))
+
+                if (values[0].x > values[1].x) {
+                    series2.resetData(arrayOf(values[1], values[0]))
+                }
+                else {
+                    series2.resetData(arrayOf(values[0], values[1]))
+                }
+
+            }
+        }
+
+        previousX = x.toDouble()
+        previousY = y.toDouble()
+        return true
     }
 
     private fun makeGraph(appStart: Boolean) {
