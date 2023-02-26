@@ -1,8 +1,8 @@
 package com.example.symmetricalcomponents
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.provider.ContactsContract
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
@@ -26,11 +26,15 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var previousGraphPoint: DataPoint
 
+    private var previousX: Double = 0.0
+    private var previousY: Double = 0.0
+
+    @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //button = findViewById(R.id.resetButton)
+        button = findViewById(R.id.resetButton)
         graph = findViewById(R.id.graph)
 
         series1 = LineGraphSeries1()
@@ -53,21 +57,54 @@ class MainActivity : AppCompatActivity() {
 
         previousGraphPoint = DataPoint(50.0,50.0)
 
-        //graph.addSeries(series1)
+        graph.addSeries(series1)
         graph.addSeries(series2)
 
-        /*button.setOnClickListener {
+        /*var activeSeries: LineGraphSeries1<DataPoint>? = null
+        series2.setOnDataPointTapListener(OnDataPointTapListener { _, _ ->
+            activeSeries = series2
+        })*/
+
+        graph.setOnTouchListener { v, event ->
+
+            val x: Float = event.x
+            val y: Float = event.y
+
+            when (event?.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    var dx: Double = x - previousX
+                    var dy: Double = y - previousY
+
+                    dx*=0.2
+                    dy*=0.2
+
+                    val values = arrayOf(DataPoint(0.0,0.0), DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy))
+                    previousGraphPoint = DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy)
+
+                    if (values[0].x > values[1].x) {
+                        series2.resetData(arrayOf(values[1], values[0]))
+                    }
+                    else {
+                        series2.resetData(arrayOf(values[0], values[1]))
+                    }
+                }
+            }
+            previousX = x.toDouble()
+            previousY = y.toDouble()
+            v?.onTouchEvent(event) ?: true
+        }
+
+        button.setOnClickListener {
             // Resets the series to clear previous graph
             series1.resetData(arrayOf(DataPoint(viewport.getMinX(true), viewport.getMinY(true))))
             makeGraph(false)
-        }*/
+        }
         makeGraph(true)
     }
 
-    private var previousX: Double = 0.0
-    private var previousY: Double = 0.0
 
-    override fun onTouchEvent(event: MotionEvent): Boolean {
+
+    /*override fun onTouchEvent(event: MotionEvent): Boolean {
         val x: Float = event.x
         val y: Float = event.y
 
@@ -93,7 +130,7 @@ class MainActivity : AppCompatActivity() {
         previousX = x.toDouble()
         previousY = y.toDouble()
         return true
-    }
+    }*/
 
     private fun makeGraph(appStart: Boolean) {
         // Give x and y axes their range
@@ -161,4 +198,5 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
 }
