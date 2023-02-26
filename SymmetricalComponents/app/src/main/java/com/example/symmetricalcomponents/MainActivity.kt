@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
     private val x = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
     private val y = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
 
+    private lateinit var previousGraphPoint: DataPoint
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -49,6 +51,8 @@ class MainActivity : AppCompatActivity() {
             100
         )
 
+        previousGraphPoint = DataPoint(50.0,50.0)
+
         //graph.addSeries(series1)
         graph.addSeries(series2)
 
@@ -73,7 +77,8 @@ class MainActivity : AppCompatActivity() {
                 var dx: Double = x - previousX
                 var dy: Double = y - previousY
 
-                val values = arrayOf(DataPoint(0.0,0.0), DataPoint(dx, -dy))
+                val values = arrayOf(DataPoint(0.0,0.0), DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy))
+                previousGraphPoint = DataPoint(previousGraphPoint.x + dx, previousGraphPoint.y - dy)
 
                 if (values[0].x > values[1].x) {
                     series2.resetData(arrayOf(values[1], values[0]))
