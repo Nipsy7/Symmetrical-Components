@@ -33,46 +33,28 @@ class MainActivity : AppCompatActivity() {
     private var previousX: Double = 0.0
     private var previousY: Double = 0.0
 
-    private fun setupSeries(series: LineGraphSeries1<DataPoint>, drawDataPoints: Boolean, colour: Int, dataPoint1: DataPoint, dataPoint2: DataPoint) {
-        series.isDrawDataPoints = drawDataPoints
-        series.color = colour
-        val dataPoints = orderData(dataPoint1, dataPoint2)
 
-        series.appendData(
-            dataPoints[0],
-            false,
-            100
-        )
-        series.appendData(
-            dataPoints[1],
-            false,
-            100
-        )
-    }
-
-    private fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPoint> {
-        if (dataPoint1.x > dataPoint2.x) {
-            return arrayOf(dataPoint2, dataPoint1)
-        }
-        return arrayOf(dataPoint1, dataPoint2)
-    }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //Get Views
         button = findViewById(R.id.resetButton)
         graph = findViewById(R.id.graph)
 
+        //Setup example line graph series
         series1 = LineGraphSeries1()
         series1.isDrawDataPoints = true
         series1.color = Color.RED
 
+        //Define starting locations for phase series
         previousGraphPointPhaseOne = DataPoint(50.0,50.0)
         previousGraphPointPhaseTwo = DataPoint(-50.0,10.0)
         previousGraphPointPhaseThree = DataPoint(10.0,0.0)
 
+        //Create phase series
         phaseOneSeries = LineGraphSeries1()
         setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), previousGraphPointPhaseOne)
 
@@ -82,15 +64,18 @@ class MainActivity : AppCompatActivity() {
         phaseThreeSeries = LineGraphSeries1()
         setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), previousGraphPointPhaseThree)
 
+        //Add series to graph view
         //graph.addSeries(series1)
         graph.addSeries(phaseOneSeries)
         graph.addSeries(phaseTwoSeries)
         graph.addSeries(phaseThreeSeries)
 
+        //Variables to keep track of phase series selected by user
         val seriesArr = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries)
         val previousCoord = arrayOf(previousGraphPointPhaseOne, previousGraphPointPhaseTwo, previousGraphPointPhaseThree)
         var seriesArrIndex = 0
 
+        //Listeners for user input on phase series
         phaseOneSeries.setOnDataPointTapListener(OnDataPointTapListener { _, _ ->
             seriesArrIndex = 0
             Toast.makeText(
@@ -116,6 +101,7 @@ class MainActivity : AppCompatActivity() {
             ).show()
         })
 
+        //Touch listener for graph view that updates series per user input
         graph.setOnTouchListener { v, event ->
 
             val x: Float = event.x
@@ -139,6 +125,7 @@ class MainActivity : AppCompatActivity() {
             v?.onTouchEvent(event) ?: true
         }
 
+        //Button listener that redraws random example graph
         button.setOnClickListener {
             // Resets the series to clear previous graph
             series1.resetData(arrayOf(DataPoint(viewport.getMinX(true), viewport.getMinY(true))))
@@ -147,6 +134,7 @@ class MainActivity : AppCompatActivity() {
         makeGraph(true)
     }
 
+    //Define graph and viewport values
     private fun makeGraph(appStart: Boolean) {
         // Give x and y axes their range
         viewport = graph.viewport
@@ -201,6 +189,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    //Append random values to example graph series
     private fun appendSeriesData(value: Int) {
         for (i in value until x.size) {
             series1.appendData(
@@ -214,4 +203,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //Set variables in phase series
+    private fun setupSeries(series: LineGraphSeries1<DataPoint>, drawDataPoints: Boolean, colour: Int, dataPoint1: DataPoint, dataPoint2: DataPoint) {
+        series.isDrawDataPoints = drawDataPoints
+        series.color = colour
+        val dataPoints = orderData(dataPoint1, dataPoint2)
+
+        series.appendData(
+            dataPoints[0],
+            false,
+            100
+        )
+        series.appendData(
+            dataPoints[1],
+            false,
+            100
+        )
+    }
+
+    //Order phase series data (lowest x value must always come first)
+    private fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPoint> {
+        if (dataPoint1.x > dataPoint2.x) {
+            return arrayOf(dataPoint2, dataPoint1)
+        }
+        return arrayOf(dataPoint1, dataPoint2)
+    }
 }
