@@ -3,6 +3,7 @@ package com.example.symmetricalcomponents
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.ContactsContract
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
@@ -33,19 +34,31 @@ class MainActivity : AppCompatActivity() {
     private var previousX: Double = 0.0
     private var previousY: Double = 0.0
 
-    fun setupSeries(series: LineGraphSeries1<DataPoint>, drawDataPoints: Boolean, colour: Color, dataPoint1: DataPoint, dataPoint2: DataPoint) {
+    private fun setupSeries(series: LineGraphSeries1<DataPoint>, drawDataPoints: Boolean, colour: Int, dataPoint1: DataPoint, dataPoint2: DataPoint) {
         series.isDrawDataPoints = drawDataPoints
         series.color = Color.RED
+
+        val dataPoints = orderData(dataPoint1, dataPoint2)
+
         series.appendData(
-            dataPoint1,
+            dataPoints[0],
             false,
             100
         )
         phaseOneSeries.appendData(
-            dataPoint2,
+            dataPoints[1],
             false,
             100
         )
+    }
+
+    private fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPoint> {
+        if (dataPoint1.x > dataPoint2.x) {
+            val temp: DataPoint = dataPoint1
+            var dataPoint1 = dataPoint2
+            var dataPoint2 = temp
+        }
+        return arrayOf(dataPoint1, dataPoint2)
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -61,18 +74,7 @@ class MainActivity : AppCompatActivity() {
         series1.color = Color.RED
 
         phaseOneSeries = LineGraphSeries1()
-        phaseOneSeries.isDrawDataPoints = true
-        phaseOneSeries.color = Color.GREEN
-        phaseOneSeries.appendData(
-            DataPoint(0.0,0.0),
-            false,
-            100
-        )
-        phaseOneSeries.appendData(
-            DataPoint(50.0,50.0),
-            false,
-            100
-        )
+        setupSeries(phaseOneSeries, false, Color.GREEN, DataPoint(0.0, 0.0), DataPoint(50.0, 50.0))
 
         phaseTwoSeries = LineGraphSeries1()
         phaseTwoSeries.isDrawDataPoints = true
