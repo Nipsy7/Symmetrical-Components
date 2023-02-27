@@ -104,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
         previousGraphPointPhaseOne = DataPoint(50.0,50.0)
         previousGraphPointPhaseTwo = DataPoint(-50.0,0.0)
-        previousGraphPointPhaseThree = DataPoint(10.0,-30.0)
+        previousGraphPointPhaseThree = DataPoint(10.0,0.0)
 
         //graph.addSeries(series1)
         graph.addSeries(phaseOneSeries)
