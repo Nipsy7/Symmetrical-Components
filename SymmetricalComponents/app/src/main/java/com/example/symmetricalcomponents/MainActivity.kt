@@ -57,10 +57,8 @@ class MainActivity : AppCompatActivity() {
         //Create phase series
         phaseOneSeries = LineGraphSeries1()
         setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), previousGraphPointPhaseOne)
-
         phaseTwoSeries = LineGraphSeries1()
         setupSeries(phaseTwoSeries, true, Color.BLUE, DataPoint(0.0, 0.0), previousGraphPointPhaseTwo)
-
         phaseThreeSeries = LineGraphSeries1()
         setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), previousGraphPointPhaseThree)
 
