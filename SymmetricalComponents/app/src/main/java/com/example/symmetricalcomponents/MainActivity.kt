@@ -3,8 +3,6 @@ package com.example.symmetricalcomponents
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
-import android.provider.ContactsContract
-import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
@@ -38,7 +36,6 @@ class MainActivity : AppCompatActivity() {
     private fun setupSeries(series: LineGraphSeries1<DataPoint>, drawDataPoints: Boolean, colour: Int, dataPoint1: DataPoint, dataPoint2: DataPoint) {
         series.isDrawDataPoints = drawDataPoints
         series.color = colour
-
         val dataPoints = orderData(dataPoint1, dataPoint2)
 
         series.appendData(
@@ -55,10 +52,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPoint> {
         if (dataPoint1.x > dataPoint2.x) {
-            val newDataPoint1 = dataPoint2
-            val newDataPoint2 = dataPoint1
-
-            return arrayOf(newDataPoint1, newDataPoint2)
+            return arrayOf(dataPoint2, dataPoint1)
         }
         return arrayOf(dataPoint1, dataPoint2)
     }
