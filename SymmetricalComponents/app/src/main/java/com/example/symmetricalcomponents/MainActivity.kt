@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
 import android.provider.ContactsContract
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
@@ -54,9 +55,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPoint> {
         if (dataPoint1.x > dataPoint2.x) {
-            val temp: DataPoint = dataPoint1
-            var dataPoint1 = dataPoint2
-            var dataPoint2 = temp
+            val newDataPoint1 = dataPoint2
+            val newDataPoint2 = dataPoint1
+
+            return arrayOf(newDataPoint1, newDataPoint2)
         }
         return arrayOf(dataPoint1, dataPoint2)
     }
@@ -73,18 +75,18 @@ class MainActivity : AppCompatActivity() {
         series1.isDrawDataPoints = true
         series1.color = Color.RED
 
-        phaseOneSeries = LineGraphSeries1()
-        setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), DataPoint(50.0, 50.0))
-
-        phaseTwoSeries = LineGraphSeries1()
-        setupSeries(phaseTwoSeries, true, Color.BLUE, DataPoint(-50.0,10.0), DataPoint(0.0,0.0))
-
-        phaseThreeSeries = LineGraphSeries1()
-        setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), DataPoint(10.0,0.0))
-
         previousGraphPointPhaseOne = DataPoint(50.0,50.0)
         previousGraphPointPhaseTwo = DataPoint(-50.0,10.0)
         previousGraphPointPhaseThree = DataPoint(10.0,0.0)
+
+        phaseOneSeries = LineGraphSeries1()
+        setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), previousGraphPointPhaseOne)
+
+        phaseTwoSeries = LineGraphSeries1()
+        setupSeries(phaseTwoSeries, true, Color.BLUE, DataPoint(0.0, 0.0), previousGraphPointPhaseTwo)
+
+        phaseThreeSeries = LineGraphSeries1()
+        setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), previousGraphPointPhaseThree)
 
         //graph.addSeries(series1)
         graph.addSeries(phaseOneSeries)
@@ -133,16 +135,9 @@ class MainActivity : AppCompatActivity() {
                     dx*=0.2
                     dy*=0.2
 
-                    val values = arrayOf(DataPoint(0.0, 0.0), DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy))
+                    val values = orderData(DataPoint(0.0, 0.0), DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy))
                     previousCoord[seriesArrIndex] = DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy)
-
-                    //TO DO, update this to use orderData() function
-                    if (values[0].x > values[1].x) {
-                        seriesArr[seriesArrIndex].resetData(arrayOf(values[1], values[0]))
-                    }
-                    else {
-                        seriesArr[seriesArrIndex].resetData(arrayOf(values[0], values[1]))
-                    }
+                    seriesArr[seriesArrIndex].resetData(arrayOf(values[0], values[1]))
                 }
             }
             previousX = x.toDouble()
