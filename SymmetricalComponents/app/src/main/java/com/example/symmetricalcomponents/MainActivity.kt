@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupSeries(series: LineGraphSeries1<DataPoint>, drawDataPoints: Boolean, colour: Int, dataPoint1: DataPoint, dataPoint2: DataPoint) {
         series.isDrawDataPoints = drawDataPoints
-        series.color = Color.RED
+        series.color = colour
 
         val dataPoints = orderData(dataPoint1, dataPoint2)
 
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
             false,
             100
         )
-        phaseOneSeries.appendData(
+        series.appendData(
             dataPoints[1],
             false,
             100
@@ -74,38 +74,16 @@ class MainActivity : AppCompatActivity() {
         series1.color = Color.RED
 
         phaseOneSeries = LineGraphSeries1()
-        setupSeries(phaseOneSeries, false, Color.GREEN, DataPoint(0.0, 0.0), DataPoint(50.0, 50.0))
+        setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), DataPoint(50.0, 50.0))
 
         phaseTwoSeries = LineGraphSeries1()
-        phaseTwoSeries.isDrawDataPoints = true
-        phaseTwoSeries.color = Color.BLUE
-        phaseTwoSeries.appendData(
-            DataPoint(-50.0,0.0),
-            false,
-            100
-        )
-        phaseTwoSeries.appendData(
-            DataPoint(0.0,0.0),
-            false,
-            100
-        )
+        setupSeries(phaseTwoSeries, true, Color.BLUE, DataPoint(-50.0,10.0), DataPoint(0.0,0.0))
 
         phaseThreeSeries = LineGraphSeries1()
-        phaseThreeSeries.isDrawDataPoints = true
-        phaseThreeSeries.color = Color.RED
-        phaseThreeSeries.appendData(
-            DataPoint(0.0,0.0),
-            false,
-            100
-        )
-        phaseThreeSeries.appendData(
-            DataPoint(10.0,0.0),
-            false,
-            100
-        )
+        setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), DataPoint(10.0,0.0))
 
         previousGraphPointPhaseOne = DataPoint(50.0,50.0)
-        previousGraphPointPhaseTwo = DataPoint(-50.0,0.0)
+        previousGraphPointPhaseTwo = DataPoint(-50.0,10.0)
         previousGraphPointPhaseThree = DataPoint(10.0,0.0)
 
         //graph.addSeries(series1)
@@ -157,6 +135,8 @@ class MainActivity : AppCompatActivity() {
 
                     val values = arrayOf(DataPoint(0.0, 0.0), DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy))
                     previousCoord[seriesArrIndex] = DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy)
+
+                    //TO DO, update this to use orderData() function
                     if (values[0].x > values[1].x) {
                         seriesArr[seriesArrIndex].resetData(arrayOf(values[1], values[0]))
                     }
