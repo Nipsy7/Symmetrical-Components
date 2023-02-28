@@ -3,6 +3,7 @@ package com.example.symmetricalcomponents
 import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.Toast
@@ -11,7 +12,6 @@ import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
-import com.jjoe64.graphview.series.OnDataPointTapListener
 import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
 
 
@@ -20,11 +20,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var phaseOneSeries: LineGraphSeries1<DataPoint>
     private lateinit var phaseTwoSeries: LineGraphSeries1<DataPoint>
     private lateinit var phaseThreeSeries: LineGraphSeries1<DataPoint>
-    private lateinit var graph: GraphView
+    private lateinit var vGraph: GraphView
     private lateinit var viewport: Viewport
-    private lateinit var button: Button
-    private val x = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
-    private val y = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
+    private lateinit var vButton: Button
+    private var x = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
+    private var y = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
 
     private lateinit var previousGraphPointPhaseOne: DataPoint
     private lateinit var previousGraphPointPhaseTwo: DataPoint
@@ -33,16 +33,14 @@ class MainActivity : AppCompatActivity() {
     private var previousX: Double = 0.0
     private var previousY: Double = 0.0
 
-
-
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         //Get Views
-        button = findViewById(R.id.resetButton)
-        graph = findViewById(R.id.graph)
+        vButton = findViewById(R.id.resetButton)
+        vGraph = findViewById(R.id.graph)
 
         //Setup example line graph series
         series1 = LineGraphSeries1()
@@ -64,46 +62,39 @@ class MainActivity : AppCompatActivity() {
 
         //Add series to graph view
         //graph.addSeries(series1)
-        graph.addSeries(phaseOneSeries)
-        graph.addSeries(phaseTwoSeries)
-        graph.addSeries(phaseThreeSeries)
+        vGraph.addSeries(phaseOneSeries)
+        vGraph.addSeries(phaseTwoSeries)
+        vGraph.addSeries(phaseThreeSeries)
 
         //Variables to keep track of phase series selected by user
-        val seriesArr = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries)
+        val phaseSeriesArr = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries)
         val previousCoord = arrayOf(previousGraphPointPhaseOne, previousGraphPointPhaseTwo, previousGraphPointPhaseThree)
         var seriesArrIndex = 0
 
         //Listeners for user input on phase series
-        phaseOneSeries.setOnDataPointTapListener(OnDataPointTapListener { _, _ ->
+        phaseOneSeries.setOnDataPointTapListener { series, datapoint ->
             seriesArrIndex = 0
-            Toast.makeText(
-                applicationContext,
-                "series: PhaseOneSeries",
-                Toast.LENGTH_SHORT
-            ).show()
-        })
-        phaseTwoSeries.setOnDataPointTapListener(OnDataPointTapListener { _, _ ->
+        }
+        phaseTwoSeries.setOnDataPointTapListener { series, datapoint ->
             seriesArrIndex = 1
-            Toast.makeText(
-                applicationContext,
-                "series: PhaseTwoSeries",
-                Toast.LENGTH_SHORT
-            ).show()
-        })
-        phaseThreeSeries.setOnDataPointTapListener(OnDataPointTapListener { _, _ ->
+        }
+        phaseThreeSeries.setOnDataPointTapListener { series, datapoint ->
             seriesArrIndex = 2
-            Toast.makeText(
-                applicationContext,
-                "series: PhaseThreeSeries",
-                Toast.LENGTH_SHORT
-            ).show()
-        })
+        }
 
         //Touch listener for graph view that updates series per user input
-        graph.setOnTouchListener { v, event ->
+        vGraph.setOnTouchListener { v, event ->
 
-            val x: Float = event.x
-            val y: Float = event.y
+            //seriesArrIndex = nextInt(3)
+
+            Toast.makeText(
+                this@MainActivity,
+                "${vGraph.x} : ${vGraph.y}",
+                Toast.LENGTH_LONG
+            ).show()
+
+            val x: Double = event.x.toDouble()
+            val y: Double = event.y.toDouble()
 
             when (event?.action) {
                 MotionEvent.ACTION_MOVE -> {
@@ -113,18 +104,19 @@ class MainActivity : AppCompatActivity() {
                     dx*=0.2
                     dy*=0.2
 
-                    val values = orderData(DataPoint(0.0, 0.0), DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy))
-                    previousCoord[seriesArrIndex] = DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy)
-                    seriesArr[seriesArrIndex].resetData(arrayOf(values[0], values[1]))
+                    val newDataPoint = DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy)
+                    val values = orderData(DataPoint(0.0, 0.0), newDataPoint)
+                    previousCoord[seriesArrIndex] = newDataPoint
+                    phaseSeriesArr[seriesArrIndex].resetData(arrayOf(values[0], values[1]))
                 }
             }
-            previousX = x.toDouble()
-            previousY = y.toDouble()
+            previousX = x
+            previousY = y
             v?.onTouchEvent(event) ?: true
         }
 
         //Button listener that redraws random example graph
-        button.setOnClickListener {
+        vButton.setOnClickListener {
             // Resets the series to clear previous graph
             series1.resetData(arrayOf(DataPoint(viewport.getMinX(true), viewport.getMinY(true))))
             makeGraph(false)
@@ -135,8 +127,8 @@ class MainActivity : AppCompatActivity() {
     //Define graph and viewport values
     private fun makeGraph(appStart: Boolean) {
         // Give x and y axes their range
-        viewport = graph.viewport
-        graph.gridLabelRenderer.setHumanRounding(false)
+        viewport = vGraph.viewport
+        vGraph.gridLabelRenderer.setHumanRounding(false)
         viewport.isYAxisBoundsManual = true
         viewport.isXAxisBoundsManual = true
         viewport.setMinX(-100.0)
@@ -146,7 +138,7 @@ class MainActivity : AppCompatActivity() {
         /*viewport.isScrollable = true
         viewport.setScrollableY(true)*/
 
-        val staticLabelsFormatter = StaticLabelsFormatter(graph)
+        val staticLabelsFormatter = StaticLabelsFormatter(vGraph)
         staticLabelsFormatter.setHorizontalLabels(
             arrayOf(
                 "-100",
