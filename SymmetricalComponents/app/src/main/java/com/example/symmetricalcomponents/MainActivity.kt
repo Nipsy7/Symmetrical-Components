@@ -12,6 +12,8 @@ import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
+import kotlin.math.pow
+import kotlin.math.sqrt
 import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
 
 
@@ -32,6 +34,8 @@ class MainActivity : AppCompatActivity() {
 
     private var previousX: Double = 0.0
     private var previousY: Double = 0.0
+
+    private var graphViewLocation = Pair(0f, 0f)
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,7 +76,7 @@ class MainActivity : AppCompatActivity() {
         var seriesArrIndex = 0
 
         //Listeners for user input on phase series
-        phaseOneSeries.setOnDataPointTapListener { series, datapoint ->
+        /*phaseOneSeries.setOnDataPointTapListener { series, datapoint ->
             seriesArrIndex = 0
         }
         phaseTwoSeries.setOnDataPointTapListener { series, datapoint ->
@@ -80,21 +84,32 @@ class MainActivity : AppCompatActivity() {
         }
         phaseThreeSeries.setOnDataPointTapListener { series, datapoint ->
             seriesArrIndex = 2
-        }
+        }*/
 
         //Touch listener for graph view that updates series per user input
         vGraph.setOnTouchListener { v, event ->
 
-            //seriesArrIndex = nextInt(3)
-
-            Toast.makeText(
-                this@MainActivity,
-                "${vGraph.x} : ${vGraph.y}",
-                Toast.LENGTH_LONG
-            ).show()
-
             val x: Double = event.x.toDouble()
             val y: Double = event.y.toDouble()
+
+            graphViewLocation = Pair(vGraph.x, vGraph.y)
+            val phaseOneScreenPos = Pair(previousGraphPointPhaseOne.x + 100f, (previousGraphPointPhaseOne.y - 100f)*-1 + 468)
+            val phaseTwoScreenPos = Pair(previousGraphPointPhaseTwo.x + 100f, (previousGraphPointPhaseTwo.y - 100f)*-1 + 468)
+            val phaseThreeScreenPos = Pair(previousGraphPointPhaseThree.x + 100f, (previousGraphPointPhaseThree.y - 100f)*-1 + 468)
+            val phaseScreenPosArr = arrayOf(phaseOneScreenPos, phaseTwoScreenPos, phaseThreeScreenPos)
+            Log.i("pos", "positions: ${phaseScreenPosArr[0]}, ${phaseScreenPosArr[1]}, ${phaseScreenPosArr[2]}")
+
+            var smallestDistance: Double? = null
+            var i = 0
+            for (a in phaseScreenPosArr) {
+                val distance: Double = sqrt((a.first - x).pow(2)+(a.second - y).pow(2))
+                if (smallestDistance == null || distance < smallestDistance) {
+                    smallestDistance = distance
+                    seriesArrIndex = i
+                    i+=1
+                }
+                //Log.i("pos", "index: $seriesArrIndex, smolDist: $smallestDistance")
+            }
 
             when (event?.action) {
                 MotionEvent.ACTION_MOVE -> {
