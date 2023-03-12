@@ -6,18 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/graphText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/graph_text"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/graph"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph"
         android:layout_width="wrap_content"
@@ -28,13 +16,14 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.337" />
+        app:layout_constraintVertical_bias="0.0" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/graphLinearLayout"
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/resetButton"
+        app:layout_constraintBottom_toTopOf="@id/textLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/graph"
@@ -42,14 +31,15 @@
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphPositive"
-            android:layout_width="143dp"
+            android:layout_width="144dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toStartOf="@id/graphNegative"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphNegative"
@@ -72,8 +62,39 @@
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@id/graphNegative"
             app:layout_constraintTop_toTopOf="parent" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/textLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/resetButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/graphLinearLayout"
+        app:layout_constraintVertical_bias="1.0">
 
+        <TextView
+            android:id="@+id/phaseOneText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="placeholder"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/phaseTwoText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="placeholder"
+            android:gravity="center"/>
+
+        <TextView
+            android:id="@+id/phaseThreeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="placeholder"
+            android:gravity="center"/>
     </LinearLayout>
 
     <Button

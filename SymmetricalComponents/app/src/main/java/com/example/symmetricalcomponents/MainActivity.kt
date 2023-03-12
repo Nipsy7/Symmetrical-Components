@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.widget.Button
+import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.jjoe64.graphview.GraphView
@@ -14,6 +15,10 @@ import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
+import java.math.BigDecimal
+import java.math.RoundingMode
+import kotlin.math.roundToInt
+import kotlin.math.roundToLong
 import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
 
 
@@ -33,6 +38,10 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var vGraphZero: GraphView
     private lateinit var viewportZero: Viewport
+
+    private lateinit var vPhaseOneText: TextView
+    private lateinit var vPhaseTwoText: TextView
+    private lateinit var vPhaseThreeText: TextView
 
     private lateinit var vButton: Button
     private var x = mutableListOf(-100.0, -90.0, -80.0, -70.0, -60.0, -50.0, -40.0, -30.0, -20.0, -10.0, 0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0)
@@ -65,6 +74,9 @@ class MainActivity : AppCompatActivity() {
         vGraphPos = findViewById(R.id.graphPositive)
         vGraphNeg = findViewById(R.id.graphNegative)
         vGraphZero = findViewById(R.id.graphZero)
+        vPhaseOneText = findViewById(R.id.phaseOneText)
+        vPhaseTwoText = findViewById(R.id.phaseTwoText)
+        vPhaseThreeText = findViewById(R.id.phaseThreeText)
 
         //Setup example line graph series
         series1 = LineGraphSeries1()
@@ -74,7 +86,12 @@ class MainActivity : AppCompatActivity() {
         //Define starting locations for phase series
         previousGraphPointPhaseOne = DataPoint(0.5,0.5)
         previousGraphPointPhaseTwo = DataPoint(-0.5,0.1)
-        previousGraphPointPhaseThree = DataPoint(0.1,0.0)
+        previousGraphPointPhaseThree = DataPoint(0.5,0.0)
+
+        //Initialise text views
+        vPhaseOneText.text = "A = ${previousGraphPointPhaseOne.x} + ${previousGraphPointPhaseOne.y}"
+        vPhaseTwoText.text = "A = ${previousGraphPointPhaseTwo.x} + ${previousGraphPointPhaseTwo.y}"
+        vPhaseThreeText.text = "A = ${previousGraphPointPhaseThree.x} + ${previousGraphPointPhaseThree.y}"
 
         //Create phase series
         phaseOneSeries = LineGraphSeries1()
@@ -177,6 +194,11 @@ class MainActivity : AppCompatActivity() {
                     val values = orderData(DataPoint(0.0, 0.0), newDataPoint)
                     previousCoord[seriesArrIndex] = newDataPoint
                     phaseSeriesArr[seriesArrIndex].resetData(arrayOf(values[0], values[1]))
+
+                    //Update text views
+                    vPhaseOneText.text = "A = ${BigDecimal(previousCoord[0].x).setScale(4, RoundingMode.HALF_UP)} + ${BigDecimal(previousCoord[0].y).setScale(4, RoundingMode.HALF_UP)}"
+                    vPhaseTwoText.text = "A = ${BigDecimal(previousCoord[1].x).setScale(4, RoundingMode.HALF_UP)} + ${BigDecimal(previousCoord[1].y).setScale(4, RoundingMode.HALF_UP)}"
+                    vPhaseThreeText.text = "A = ${BigDecimal(previousCoord[2].x).setScale(4, RoundingMode.HALF_UP)} + ${BigDecimal(previousCoord[2].y).setScale(4, RoundingMode.HALF_UP)}"
                 }
             }
             previousX = x
