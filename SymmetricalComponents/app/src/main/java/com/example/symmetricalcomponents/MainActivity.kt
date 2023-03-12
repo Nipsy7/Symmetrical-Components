@@ -54,6 +54,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vPhaseOneText: TextView
     private lateinit var vPhaseTwoText: TextView
     private lateinit var vPhaseThreeText: TextView
+    private lateinit var vPositiveText: TextView
+    private lateinit var vNegativeText: TextView
+    private lateinit var vZeroText: TextView
 
     private lateinit var previousGraphPointPhaseOne: DataPoint
     private lateinit var previousGraphPointPhaseTwo: DataPoint
@@ -103,6 +106,9 @@ class MainActivity : AppCompatActivity() {
         vPhaseOneText = findViewById(R.id.phaseOneText)
         vPhaseTwoText = findViewById(R.id.phaseTwoText)
         vPhaseThreeText = findViewById(R.id.phaseThreeText)
+        vPositiveText = findViewById(R.id.positiveText)
+        vNegativeText = findViewById(R.id.negativeText)
+        vZeroText = findViewById(R.id.zeroText)
 
         //Define starting locations for phase series
         previousGraphPointPhaseOne = DataPoint(0.5,0.5)
@@ -117,9 +123,12 @@ class MainActivity : AppCompatActivity() {
         prevPointZero = DataPoint(0.5, 0.0)
 
         //Initialise text views
-        vPhaseOneText.text = "A = ${previousGraphPointPhaseOne.x} + ${previousGraphPointPhaseOne.y}"
-        vPhaseTwoText.text = "A = ${previousGraphPointPhaseTwo.x} + ${previousGraphPointPhaseTwo.y}"
-        vPhaseThreeText.text = "A = ${previousGraphPointPhaseThree.x} + ${previousGraphPointPhaseThree.y}"
+        vPhaseOneText.text = "A = ${previousGraphPointPhaseOne.x} + j${previousGraphPointPhaseOne.y}"
+        vPhaseTwoText.text = "A = ${previousGraphPointPhaseTwo.x} + j${previousGraphPointPhaseTwo.y}"
+        vPhaseThreeText.text = "A = ${previousGraphPointPhaseThree.x} + j${previousGraphPointPhaseThree.y}"
+        vPositiveText.text = "a1 = ${prevPointPhaseOnePos.x} + j${prevPointPhaseOnePos.y}"
+        vNegativeText.text = "a2 = ${prevPointPhaseOneNeg.x} + j${prevPointPhaseOneNeg.y}"
+        vZeroText.text = "a0 = ${prevPointZero.x} + j${prevPointZero.y}"
 
         //Create phase series
         phaseOneSeries = LineGraphSeries1()
@@ -233,9 +242,9 @@ class MainActivity : AppCompatActivity() {
                     //Update text views
                     vPhaseOneText.text = "A = ${BigDecimal(previousCoord[0].x).setScale(4, RoundingMode.HALF_UP)}" +
                             " + j${BigDecimal(previousCoord[0].y).setScale(4, RoundingMode.HALF_UP)}"
-                    vPhaseTwoText.text = "A = ${BigDecimal(previousCoord[1].x).setScale(4, RoundingMode.HALF_UP)}" +
+                    vPhaseTwoText.text = "B = ${BigDecimal(previousCoord[1].x).setScale(4, RoundingMode.HALF_UP)}" +
                             " + j${BigDecimal(previousCoord[1].y).setScale(4, RoundingMode.HALF_UP)}"
-                    vPhaseThreeText.text = "A = ${BigDecimal(previousCoord[2].x).setScale(4, RoundingMode.HALF_UP)}" +
+                    vPhaseThreeText.text = "C = ${BigDecimal(previousCoord[2].x).setScale(4, RoundingMode.HALF_UP)}" +
                             " + j${BigDecimal(previousCoord[2].y).setScale(4, RoundingMode.HALF_UP)}"
                 }
             }
@@ -268,6 +277,9 @@ class MainActivity : AppCompatActivity() {
                     val newDataPoint3 = getDataPointAtAngle(newDataPoint, -2* PI/3)
                     val values3 = orderData(DataPoint(0.0, 0.0), newDataPoint3)
                     phaseThreeSeriesPos.resetData(arrayOf(values3[0], values3[1]))
+
+                    vPositiveText.text = "a1 = ${BigDecimal(prevPointPhaseOnePos.x).setScale(4, RoundingMode.HALF_UP)}" +
+                            " + j${BigDecimal(prevPointPhaseOnePos.y).setScale(4, RoundingMode.HALF_UP)}"
                 }
             }
             previousXPos = x
@@ -299,6 +311,9 @@ class MainActivity : AppCompatActivity() {
                     val newDataPoint3 = getDataPointAtAngle(newDataPoint, 2* PI/3)
                     val values3 = orderData(DataPoint(0.0, 0.0), newDataPoint3)
                     phaseThreeSeriesNeg.resetData(arrayOf(values3[0], values3[1]))
+
+                    vNegativeText.text = "a2 = ${BigDecimal(prevPointPhaseOneNeg.x).setScale(4, RoundingMode.HALF_UP)}" +
+                            " + j${BigDecimal(prevPointPhaseOneNeg.y).setScale(4, RoundingMode.HALF_UP)}"
                 }
             }
             previousXNeg = x
@@ -322,6 +337,9 @@ class MainActivity : AppCompatActivity() {
                     val values = orderData(DataPoint(0.0,0.0), newDataPoint)
                     prevPointZero = newDataPoint
                     zeroSeries.resetData(arrayOf(values[0], values[1]))
+
+                    vZeroText.text = "a0 = ${BigDecimal(prevPointZero.x).setScale(4, RoundingMode.HALF_UP)}" +
+                            " + j${BigDecimal(prevPointZero.y).setScale(4, RoundingMode.HALF_UP)}"
                 }
             }
             previousXZero = x
