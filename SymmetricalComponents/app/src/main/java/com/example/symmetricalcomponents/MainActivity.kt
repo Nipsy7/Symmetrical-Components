@@ -10,6 +10,7 @@ import android.widget.Button
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.jjoe64.graphview.GraphView
+import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.Viewport
 import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
@@ -71,9 +72,9 @@ class MainActivity : AppCompatActivity() {
         series1.color = Color.RED
 
         //Define starting locations for phase series
-        previousGraphPointPhaseOne = DataPoint(50.0,50.0)
-        previousGraphPointPhaseTwo = DataPoint(-50.0,10.0)
-        previousGraphPointPhaseThree = DataPoint(10.0,0.0)
+        previousGraphPointPhaseOne = DataPoint(0.5,0.5)
+        previousGraphPointPhaseTwo = DataPoint(-0.5,0.1)
+        previousGraphPointPhaseThree = DataPoint(0.1,0.0)
 
         //Create phase series
         phaseOneSeries = LineGraphSeries1()
@@ -84,13 +85,22 @@ class MainActivity : AppCompatActivity() {
         setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), previousGraphPointPhaseThree)
 
         //Add series to graph views
-        vGraph.addSeries(series1)
+        //vGraph.addSeries(series1)
         vGraph.addSeries(phaseOneSeries)
         vGraph.addSeries(phaseTwoSeries)
         vGraph.addSeries(phaseThreeSeries)
-        vGraphPos.addSeries(series1)
-        vGraphNeg.addSeries(series1)
-        vGraphZero.addSeries(series1)
+
+        vGraphPos.addSeries(phaseOneSeries)
+        vGraphPos.addSeries(phaseTwoSeries)
+        vGraphPos.addSeries(phaseThreeSeries)
+
+        vGraphNeg.addSeries(phaseOneSeries)
+        vGraphNeg.addSeries(phaseTwoSeries)
+        vGraphNeg.addSeries(phaseThreeSeries)
+
+        vGraphZero.addSeries(phaseOneSeries)
+        vGraphZero.addSeries(phaseTwoSeries)
+        vGraphZero.addSeries(phaseThreeSeries)
 
         //Variables to keep track of phase series selected by user
         val phaseSeriesArr = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries)
@@ -160,8 +170,8 @@ class MainActivity : AppCompatActivity() {
                     var dx: Double = x - previousX
                     var dy: Double = y - previousY
 
-                    dx*=0.2
-                    dy*=0.2
+                    dx*=0.002
+                    dy*=0.002
 
                     val newDataPoint = DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy)
                     val values = orderData(DataPoint(0.0, 0.0), newDataPoint)
@@ -192,6 +202,25 @@ class MainActivity : AppCompatActivity() {
         makeGraph(true, viewportNeg, vGraphNeg)
         viewportZero = vGraphZero.viewport
         makeGraph(true, viewportZero, vGraphZero)
+
+        val graphs = arrayOf(vGraph, vGraphPos, vGraphNeg, vGraphZero)
+        for (g in graphs) {
+            if (g == vGraph) {
+                setupGraph(g)
+            }
+            else {
+                setupGraph(g, GridLabelRenderer.GridStyle.NONE, false, false)
+            }
+        }
+    }
+
+    private fun setupGraph(graph: GraphView,
+                           graphLines: GridLabelRenderer.GridStyle = GridLabelRenderer.GridStyle.BOTH,
+                           hasVerLabels: Boolean = true,
+                           hasHorLabels: Boolean = true) {
+        graph.gridLabelRenderer.gridStyle = graphLines
+        graph.gridLabelRenderer.isVerticalLabelsVisible = hasVerLabels;
+        graph.gridLabelRenderer.isHorizontalLabelsVisible = hasHorLabels;
     }
 
     //Define graph and viewport values
@@ -201,42 +230,43 @@ class MainActivity : AppCompatActivity() {
         graph.gridLabelRenderer.setHumanRounding(false)
         viewport.isYAxisBoundsManual = true
         viewport.isXAxisBoundsManual = true
-        viewport.setMinX(-100.0)
-        viewport.setMaxX(100.0)
-        viewport.setMinY(-100.0)
-        viewport.setMaxY(100.0)
+        viewport.setMinX(-1.0)
+        viewport.setMaxX(1.0)
+        viewport.setMinY(-1.0)
+        viewport.setMaxY(1.0)
+        viewport
         /*viewport.isScrollable = true
         viewport.setScrollableY(true)*/
 
         val staticLabelsFormatter = StaticLabelsFormatter(graph)
         staticLabelsFormatter.setHorizontalLabels(
             arrayOf(
-                "-100",
-                "-80",
-                "-60",
-                "-40",
-                "-20",
+                "-1",
+                "-0.80",
+                "-0.60",
+                "-0.40",
+                "-0.20",
                 "0",
-                "20",
-                "40",
-                "60",
-                "80",
-                "100"
+                "0.20",
+                "0.40",
+                "0.60",
+                "0.80",
+                "1"
             )
         )
         staticLabelsFormatter.setVerticalLabels(
             arrayOf(
-                "-100",
-                "-80",
-                "-60",
-                "-40",
-                "-20",
+                "-1",
+                "-0.80",
+                "-0.60",
+                "-0.40",
+                "-0.20",
                 "0",
-                "20",
-                "40",
-                "60",
-                "80",
-                "100"
+                "0.20",
+                "0.40",
+                "0.60",
+                "0.80",
+                "1"
             )
         )
 
