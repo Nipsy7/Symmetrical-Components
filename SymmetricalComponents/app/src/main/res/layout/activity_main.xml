@@ -10,13 +10,12 @@
         android:id="@+id/graph"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintBottom_toTopOf="@id/graphLinearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/graphLinearLayout"
@@ -24,14 +23,16 @@
         android:layout_height="0dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@id/textLinearLayout"
+        app:layout_constraintDimensionRatio="3:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/graph"
-        app:layout_constraintVertical_bias="0.545">
+        app:layout_constraintVertical_bias="0.0"
+        android:gravity="center">
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphPositive"
-            android:layout_width="144dp"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
@@ -43,7 +44,7 @@
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphNegative"
-            android:layout_width="139dp"
+            android:layout_width="130dp"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
@@ -54,12 +55,12 @@
 
         <com.jjoe64.graphview.GraphView
             android:id="@+id/graphZero"
-            android:layout_width="wrap_content"
+            android:layout_width="130dp"
             android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/graphNegative"
             app:layout_constraintTop_toTopOf="parent" />
     </LinearLayout>
@@ -79,21 +80,18 @@
             android:id="@+id/phaseOneText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="placeholder"
             android:gravity="center"/>
 
         <TextView
             android:id="@+id/phaseTwoText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="placeholder"
             android:gravity="center"/>
 
         <TextView
             android:id="@+id/phaseThreeText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="placeholder"
             android:gravity="center"/>
     </LinearLayout>
 
@@ -105,7 +103,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/graph"
-        app:layout_constraintVertical_bias="0.903" />
+        app:layout_constraintTop_toBottomOf="@id/textLinearLayout"
+        app:layout_constraintVertical_bias="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
