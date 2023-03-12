@@ -9,6 +9,7 @@ import android.view.MotionEvent
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintSet
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.Viewport
@@ -16,6 +17,9 @@ import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
 import java.math.BigDecimal
 import java.math.RoundingMode
+import kotlin.math.PI
+import kotlin.math.cos
+import kotlin.math.sin
 import kotlin.math.sqrt
 import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
 
@@ -54,16 +58,28 @@ class MainActivity : AppCompatActivity() {
     private lateinit var previousGraphPointPhaseOne: DataPoint
     private lateinit var previousGraphPointPhaseTwo: DataPoint
     private lateinit var previousGraphPointPhaseThree: DataPoint
+
     private lateinit var prevPointPhaseOnePos: DataPoint
     private lateinit var prevPointPhaseTwoPos: DataPoint
     private lateinit var prevPointPhaseThreePos: DataPoint
+
     private lateinit var prevPointPhaseOneNeg: DataPoint
     private lateinit var prevPointPhaseTwoNeg: DataPoint
     private lateinit var prevPointPhaseThreeNeg: DataPoint
+
     private lateinit var prevPointZero: DataPoint
 
     private var previousX: Double = 0.0
     private var previousY: Double = 0.0
+
+    private var previousXPos: Double = 0.0
+    private var previousYPos: Double = 0.0
+
+    private var previousXNeg: Double = 0.0
+    private var previousYNeg: Double = 0.0
+
+    private var previousXZero: Double = 0.0
+    private var previousYZero: Double = 0.0
 
     private var graphViewLocation = Pair(0f, 0f)
 
@@ -228,6 +244,91 @@ class MainActivity : AppCompatActivity() {
             v?.onTouchEvent(event) ?: true
         }
 
+        vGraphPos.setOnTouchListener { v, event ->
+            val x: Double = event.x.toDouble()
+            val y: Double = event.y.toDouble()
+
+            when (event?.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    var dx: Double = x - previousXPos
+                    var dy: Double = y - previousYPos
+
+                    dx*=0.008
+                    dy*=0.008
+
+                    val newDataPoint = DataPoint(prevPointPhaseOnePos.x + dx, prevPointPhaseOnePos.y - dy)
+                    val values = orderData(DataPoint(0.0,0.0), newDataPoint)
+                    prevPointPhaseOnePos = newDataPoint
+                    phaseOneSeriesPos.resetData(arrayOf(values[0], values[1]))
+
+                    val newDataPoint2 = getDataPointAtAngle(newDataPoint, 2* PI/3)
+                    val values2 = orderData(DataPoint(0.0, 0.0), newDataPoint2)
+                    phaseTwoSeriesPos.resetData(arrayOf(values2[0], values2[1]))
+
+                    val newDataPoint3 = getDataPointAtAngle(newDataPoint, -2* PI/3)
+                    val values3 = orderData(DataPoint(0.0, 0.0), newDataPoint3)
+                    phaseThreeSeriesPos.resetData(arrayOf(values3[0], values3[1]))
+                }
+            }
+            previousXPos = x
+            previousYPos = y
+            v?.onTouchEvent(event) ?: true
+        }
+
+        vGraphNeg.setOnTouchListener { v, event ->
+            val x: Double = event.x.toDouble()
+            val y: Double = event.y.toDouble()
+
+            when (event?.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    var dx: Double = x - previousXNeg
+                    var dy: Double = y - previousYNeg
+
+                    dx*=0.008
+                    dy*=0.008
+
+                    val newDataPoint = DataPoint(prevPointPhaseOneNeg.x + dx, prevPointPhaseOneNeg.y - dy)
+                    val values = orderData(DataPoint(0.0,0.0), newDataPoint)
+                    prevPointPhaseOneNeg = newDataPoint
+                    phaseOneSeriesNeg.resetData(arrayOf(values[0], values[1]))
+
+                    val newDataPoint2 = getDataPointAtAngle(newDataPoint, -2* PI/3)
+                    val values2 = orderData(DataPoint(0.0, 0.0), newDataPoint2)
+                    phaseTwoSeriesNeg.resetData(arrayOf(values2[0], values2[1]))
+
+                    val newDataPoint3 = getDataPointAtAngle(newDataPoint, 2* PI/3)
+                    val values3 = orderData(DataPoint(0.0, 0.0), newDataPoint3)
+                    phaseThreeSeriesNeg.resetData(arrayOf(values3[0], values3[1]))
+                }
+            }
+            previousXNeg = x
+            previousYNeg = y
+            v?.onTouchEvent(event) ?: true
+        }
+
+        vGraphZero.setOnTouchListener { v, event ->
+            val x: Double = event.x.toDouble()
+            val y: Double = event.y.toDouble()
+
+            when (event?.action) {
+                MotionEvent.ACTION_MOVE -> {
+                    var dx: Double = x - previousXZero
+                    var dy: Double = y - previousYZero
+
+                    dx*=0.008
+                    dy*=0.008
+
+                    val newDataPoint = DataPoint(prevPointZero.x + dx, prevPointZero.y - dy)
+                    val values = orderData(DataPoint(0.0,0.0), newDataPoint)
+                    prevPointZero = newDataPoint
+                    zeroSeries.resetData(arrayOf(values[0], values[1]))
+                }
+            }
+            previousXZero = x
+            previousYZero = y
+            v?.onTouchEvent(event) ?: true
+        }
+
         viewport = vGraph.viewport
         makeGraph(viewport, vGraph)
         viewportPos = vGraphPos.viewport
@@ -246,6 +347,10 @@ class MainActivity : AppCompatActivity() {
                 setupGraph(g, GridLabelRenderer.GridStyle.BOTH, false, false)
             }
         }
+    }
+
+    private fun getDataPointAtAngle(datapoint: DataPoint, angle: Double) : DataPoint {
+        return DataPoint(datapoint.x*cos(angle) - datapoint.y*sin(angle), datapoint.y*cos(angle) + datapoint.x*sin(angle))
     }
 
     private fun setupGraph(graph: GraphView,
@@ -273,32 +378,32 @@ class MainActivity : AppCompatActivity() {
         val staticLabelsFormatter = StaticLabelsFormatter(graph)
         staticLabelsFormatter.setHorizontalLabels(
             arrayOf(
-                "-1",
-                "-0.80",
-                "-0.60",
-                "-0.40",
-                "-0.20",
-                "0",
-                "0.20",
-                "0.40",
-                "0.60",
-                "0.80",
-                "1"
+                "-1.0",
+                "-0.8",
+                "-0.6",
+                "-0.4",
+                "-0.2",
+                "0.0",
+                "0.2",
+                "0.4",
+                "0.6",
+                "0.8",
+                "1.0"
             )
         )
         staticLabelsFormatter.setVerticalLabels(
             arrayOf(
-                "-1",
-                "-0.80",
-                "-0.60",
-                "-0.40",
-                "-0.20",
-                "0",
-                "0.20",
-                "0.40",
-                "0.60",
-                "0.80",
-                "1"
+                "-1.0",
+                "-0.8",
+                "-0.6",
+                "-0.4",
+                "-0.2",
+                "0.0",
+                "0.2",
+                "0.4",
+                "0.6",
+                "0.8",
+                "1.0"
             )
         )
     }
