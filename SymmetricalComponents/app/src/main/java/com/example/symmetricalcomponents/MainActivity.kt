@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
         prevPointPhaseOneNeg = DataPoint(0.0, 1.0)
         prevPointPhaseTwoNeg = DataPoint(sqrt(3.0)/2, -0.5)
         prevPointPhaseThreeNeg = DataPoint(-sqrt(3.0)/2, -0.5)
-        prevPointZero = DataPoint(0.5, 0.0)
+        prevPointZero = DataPoint(0.0, 0.0)
 
         //Initialise text views
         vPhaseOneText.text = "A = ${previousGraphPointPhaseOne.x} + j${previousGraphPointPhaseOne.y}"
