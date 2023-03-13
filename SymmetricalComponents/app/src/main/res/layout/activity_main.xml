@@ -90,21 +90,24 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="stuff" />
+                    android:text="stuff"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/phaseTwoText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="stuff" />
+                    android:text="stuff"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/phaseThreeText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="stuff" />
+                    android:text="stuff"
+                    android:textSize="18sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -119,19 +122,22 @@
                     android:id="@+id/positiveText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="stuff" />
+                    android:text="stuff"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/negativeText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="stuff" />
+                    android:text="stuff"
+                    android:textSize="18sp" />
 
                 <TextView
                     android:id="@+id/zeroText"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:text="stuff" />
+                    android:text="stuff"
+                    android:textSize="18sp" />
             </LinearLayout>
         </LinearLayout>
 
