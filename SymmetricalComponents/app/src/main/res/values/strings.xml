@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">SymmetricalComponents</string>
     <string name="graph_text">Graph</string>
-    <string name="rest_button_text">Reset Button</string>
+    <string name="rest_button_text">Reset</string>
 </resources>

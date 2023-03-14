@@ -67,7 +67,7 @@ public fun getEventLocation(event: MotionEvent) : Pair<Double, Double> {
     return Pair(x,y)
 }
 
-//Move other series on the graph relative to the first series moved
+//Move 2 series on the graph relative to another series by 2PI/3 radians (120 degrees) in opposite directions
 public fun moveAdditionalDataPoints(newDataPoint: DataPoint, series2: LineGraphSeries<DataPoint>?, series3: LineGraphSeries<DataPoint>?) {
     val newDataPoint2 = getDataPointAtAngle(newDataPoint, -2* PI /3)
     val values2 = orderData(DataPoint(0.0, 0.0), newDataPoint2)
@@ -92,10 +92,12 @@ public fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPo
 }
 
 public fun setupGraph(graph: GraphView,
+                       graphTitle: String?,
                        graphLines: GridLabelRenderer.GridStyle = GridLabelRenderer.GridStyle.BOTH,
                        hasVerLabels: Boolean = true,
                        hasHorLabels: Boolean = true,
                        highlightAxes: Boolean = false) {
+    graph.title = graphTitle
     graph.gridLabelRenderer.gridStyle = graphLines
     graph.gridLabelRenderer.isVerticalLabelsVisible = hasVerLabels;
     graph.gridLabelRenderer.isHorizontalLabelsVisible = hasHorLabels;
