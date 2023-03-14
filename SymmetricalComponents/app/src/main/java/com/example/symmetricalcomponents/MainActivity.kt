@@ -148,12 +148,18 @@ class MainActivity : AppCompatActivity() {
         var seriesArrIndex = 0
 
         //Initialise text views
-        outputLocation(vPhaseOneText, startGraphPointPhaseOne, "A")
-        outputLocation(vPhaseTwoText, startGraphPointPhaseTwo, "B")
-        outputLocation(vPhaseThreeText, startGraphPointPhaseThree, "C")
-        outputLocation(vPositiveText, prevPointPhaseOnePos, "a1")
-        outputLocation(vNegativeText, prevPointPhaseOneNeg, "a2")
-        outputLocation(vZeroText, prevPointZero, "a0")
+        val phaseOneTag = "A"
+        val phaseTwoTag = "B"
+        val phaseThreeTag = "C"
+        val phaseOnePosTag = "a1"
+        val phaseOneNegTag = "a2"
+        val zeroTag = "a0"
+        outputLocation(vPhaseOneText, startGraphPointPhaseOne, phaseOneTag)
+        outputLocation(vPhaseTwoText, startGraphPointPhaseTwo, phaseTwoTag)
+        outputLocation(vPhaseThreeText, startGraphPointPhaseThree, phaseThreeTag)
+        outputLocation(vPositiveText, prevPointPhaseOnePos, phaseOnePosTag)
+        outputLocation(vNegativeText, prevPointPhaseOneNeg, phaseOneNegTag)
+        outputLocation(vZeroText, prevPointZero, zeroTag)
 
         //Listeners for user input on phase series
         phaseOneSeries.setOnDataPointTapListener { series, datapoint ->
@@ -172,9 +178,9 @@ class MainActivity : AppCompatActivity() {
             val xy = getEventLocation(event)
 
             previousCoord[seriesArrIndex] = moveDataPoint(xy.first, xy.second, event, previousX, previousY, previousCoord[seriesArrIndex], phaseSeriesArr[seriesArrIndex], null, null, vPhaseOneText, false, 0.002f)
-            outputLocation(vPhaseOneText, previousCoord[0], "A")
-            outputLocation(vPhaseTwoText, previousCoord[1], "A")
-            outputLocation(vPhaseThreeText, previousCoord[2], "A")
+            outputLocation(vPhaseOneText, previousCoord[0], phaseOneTag)
+            outputLocation(vPhaseTwoText, previousCoord[1], phaseTwoTag)
+            outputLocation(vPhaseThreeText, previousCoord[2], phaseThreeTag)
 
             previousX = xy.first
             previousY = xy.second
@@ -185,7 +191,7 @@ class MainActivity : AppCompatActivity() {
             val xy = getEventLocation(event)
 
             prevPointPhaseOnePos = moveDataPoint(xy.first, xy.second, event, previousXPos, previousYPos, prevPointPhaseOnePos, phaseOneSeriesPos, phaseTwoSeriesPos, phaseThreeSeriesPos, vPositiveText, true)
-            outputLocation(vPositiveText, prevPointPhaseOnePos, "a1")
+            outputLocation(vPositiveText, prevPointPhaseOnePos, phaseOnePosTag)
 
             previousXPos = xy.first
             previousYPos = xy.second
@@ -196,7 +202,7 @@ class MainActivity : AppCompatActivity() {
             val xy = getEventLocation(event)
 
             prevPointPhaseOneNeg = moveDataPoint(xy.first, xy.second, event, previousXNeg, previousYNeg, prevPointPhaseOneNeg, phaseOneSeriesNeg, phaseTwoSeriesNeg, phaseThreeSeriesNeg, vNegativeText, true)
-            outputLocation(vNegativeText, prevPointPhaseOneNeg, "a2")
+            outputLocation(vNegativeText, prevPointPhaseOneNeg, phaseOneNegTag)
 
             previousXNeg = xy.first
             previousYNeg = xy.second
@@ -207,7 +213,7 @@ class MainActivity : AppCompatActivity() {
             val xy = getEventLocation(event)
 
             prevPointZero = moveDataPoint(xy.first, xy.second, event, previousXZero, previousYZero, prevPointZero, zeroSeries, null, null, vZeroText, false)
-            outputLocation(vZeroText, prevPointZero, "a0")
+            outputLocation(vZeroText, prevPointZero, zeroTag)
 
             previousXZero = xy.first
             previousYZero = xy.second
