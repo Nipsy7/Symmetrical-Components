@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import android.util.Log
 import android.view.MotionEvent
 import android.widget.TextView
+import com.jjoe64.graphview.GraphView
+import com.jjoe64.graphview.GridLabelRenderer
+import com.jjoe64.graphview.Viewport
+import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
 import com.jjoe64.graphview.series.LineGraphSeries
-import com.jjoe64.graphview.series.Series
 import java.math.BigDecimal
 import java.math.RoundingMode
 import kotlin.math.PI
@@ -77,4 +80,77 @@ public fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPo
         return arrayOf(dataPoint2, dataPoint1)
     }
     return arrayOf(dataPoint1, dataPoint2)
+}
+
+public fun setupGraph(graph: GraphView,
+                       graphLines: GridLabelRenderer.GridStyle = GridLabelRenderer.GridStyle.BOTH,
+                       hasVerLabels: Boolean = true,
+                       hasHorLabels: Boolean = true,
+                       highlightAxes: Boolean = true) {
+    graph.gridLabelRenderer.gridStyle = graphLines
+    graph.gridLabelRenderer.isVerticalLabelsVisible = hasVerLabels;
+    graph.gridLabelRenderer.isHorizontalLabelsVisible = hasHorLabels;
+    graph.gridLabelRenderer.isHighlightZeroLines = highlightAxes
+}
+
+//Define graph and viewport values
+public fun makeGraph(viewport: Viewport, graph: GraphView) {
+    // Give x and y axes their range
+    graph.gridLabelRenderer.setHumanRounding(false)
+    viewport.isYAxisBoundsManual = true
+    viewport.isXAxisBoundsManual = true
+    viewport.setMinX(-1.0)
+    viewport.setMaxX(1.0)
+    viewport.setMinY(-1.0)
+    viewport.setMaxY(1.0)
+
+    val staticLabelsFormatter = StaticLabelsFormatter(graph)
+    staticLabelsFormatter.setHorizontalLabels(
+        arrayOf(
+            "-1.0",
+            "-0.8",
+            "-0.6",
+            "-0.4",
+            "-0.2",
+            "0.0",
+            "0.2",
+            "0.4",
+            "0.6",
+            "0.8",
+            "1.0"
+        )
+    )
+    staticLabelsFormatter.setVerticalLabels(
+        arrayOf(
+            "-1.0",
+            "-0.8",
+            "-0.6",
+            "-0.4",
+            "-0.2",
+            "0.0",
+            "0.2",
+            "0.4",
+            "0.6",
+            "0.8",
+            "1.0"
+        )
+    )
+}
+
+//Set variables in phase series
+public fun setupSeries(series: LineGraphSeries<DataPoint>, drawDataPoints: Boolean, colour: Int, dataPoint1: DataPoint, dataPoint2: DataPoint) {
+    series.isDrawDataPoints = drawDataPoints
+    series.color = colour
+    val dataPoints = orderData(dataPoint1, dataPoint2)
+
+    series.appendData(
+        dataPoints[0],
+        false,
+        100
+    )
+    series.appendData(
+        dataPoints[1],
+        false,
+        100
+    )
 }

@@ -4,13 +4,11 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.view.MotionEvent
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintSet
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.GridLabelRenderer
 import com.jjoe64.graphview.Viewport
@@ -18,63 +16,11 @@ import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
 import java.math.BigDecimal
 import java.math.RoundingMode
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.math.sqrt
 import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
 
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var phaseOneSeries: LineGraphSeries1<DataPoint>
-    private lateinit var phaseTwoSeries: LineGraphSeries1<DataPoint>
-    private lateinit var phaseThreeSeries: LineGraphSeries1<DataPoint>
-
-    private lateinit var phaseOneSeriesPos: LineGraphSeries1<DataPoint>
-    private lateinit var phaseTwoSeriesPos: LineGraphSeries1<DataPoint>
-    private lateinit var phaseThreeSeriesPos: LineGraphSeries1<DataPoint>
-
-    private lateinit var phaseOneSeriesNeg: LineGraphSeries1<DataPoint>
-    private lateinit var phaseTwoSeriesNeg: LineGraphSeries1<DataPoint>
-    private lateinit var phaseThreeSeriesNeg: LineGraphSeries1<DataPoint>
-
-    private lateinit var zeroSeries: LineGraphSeries1<DataPoint>
-
-    private lateinit var vGraph: GraphView
-    private lateinit var viewport: Viewport
-
-    private lateinit var vGraphPos: GraphView
-    private lateinit var viewportPos: Viewport
-
-    private lateinit var vGraphNeg: GraphView
-    private lateinit var viewportNeg: Viewport
-
-    private lateinit var vGraphZero: GraphView
-    private lateinit var viewportZero: Viewport
-
-    private lateinit var vPhaseOneText: TextView
-    private lateinit var vPhaseTwoText: TextView
-    private lateinit var vPhaseThreeText: TextView
-    private lateinit var vPositiveText: TextView
-    private lateinit var vNegativeText: TextView
-    private lateinit var vZeroText: TextView
-
-    private lateinit var vResetButton: Button
-
-    private lateinit var previousGraphPointPhaseOne: DataPoint
-    private lateinit var previousGraphPointPhaseTwo: DataPoint
-    private lateinit var previousGraphPointPhaseThree: DataPoint
-
-    private lateinit var prevPointPhaseOnePos: DataPoint
-    private lateinit var prevPointPhaseTwoPos: DataPoint
-    private lateinit var prevPointPhaseThreePos: DataPoint
-
-    private lateinit var prevPointPhaseOneNeg: DataPoint
-    private lateinit var prevPointPhaseTwoNeg: DataPoint
-    private lateinit var prevPointPhaseThreeNeg: DataPoint
-
-    private lateinit var prevPointZero: DataPoint
-
     private var previousX: Double = 0.0
     private var previousY: Double = 0.0
 
@@ -87,44 +33,39 @@ class MainActivity : AppCompatActivity() {
     private var previousXZero: Double = 0.0
     private var previousYZero: Double = 0.0
 
-    private var graphViewLocation = Pair(0f, 0f)
-
     @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("ClickableViewAccessibility", "SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //Get screen width and height
-        val displayMetrics = DisplayMetrics()
-        //windowManager.defaultDisplay.getMetrics(displayMetrics)
-        var screenWidth = displayMetrics.widthPixels
-        var screenHeight = displayMetrics.heightPixels
-
         //Get Views
-        vGraph = findViewById(R.id.graph)
-        vGraphPos = findViewById(R.id.graphPositive)
-        vGraphNeg = findViewById(R.id.graphNegative)
-        vGraphZero = findViewById(R.id.graphZero)
-        vPhaseOneText = findViewById(R.id.phaseOneText)
-        vPhaseTwoText = findViewById(R.id.phaseTwoText)
-        vPhaseThreeText = findViewById(R.id.phaseThreeText)
-        vPositiveText = findViewById(R.id.positiveText)
-        vNegativeText = findViewById(R.id.negativeText)
-        vZeroText = findViewById(R.id.zeroText)
-        vResetButton = findViewById(R.id.resetButton)
+        val vGraph = findViewById<GraphView>(R.id.graph)
+        val vGraphPos = findViewById<GraphView>(R.id.graphPositive)
+        val vGraphNeg = findViewById<GraphView>(R.id.graphNegative)
+        val vGraphZero = findViewById<GraphView>(R.id.graphZero)
+        val vPhaseOneText = findViewById<TextView>(R.id.phaseOneText)
+        val vPhaseTwoText = findViewById<TextView>(R.id.phaseTwoText)
+        val vPhaseThreeText = findViewById<TextView>(R.id.phaseThreeText)
+        val vPositiveText = findViewById<TextView>(R.id.positiveText)
+        val vNegativeText = findViewById<TextView>(R.id.negativeText)
+        val vZeroText = findViewById<TextView>(R.id.zeroText)
+        val vResetButton = findViewById<Button>(R.id.resetButton)
 
         //Define starting locations for phase series
-        previousGraphPointPhaseOne = DataPoint(0.5,0.5)
-        previousGraphPointPhaseTwo = DataPoint(-0.5,0.1)
-        previousGraphPointPhaseThree = DataPoint(0.5,0.0)
-        prevPointPhaseOnePos = DataPoint(0.0, 1.0)
-        prevPointPhaseTwoPos = DataPoint(-sqrt(3.0)/2, -0.5)
-        prevPointPhaseThreePos = DataPoint(sqrt(3.0)/2, -0.5)
-        prevPointPhaseOneNeg = DataPoint(0.0, 1.0)
-        prevPointPhaseTwoNeg = DataPoint(sqrt(3.0)/2, -0.5)
-        prevPointPhaseThreeNeg = DataPoint(-sqrt(3.0)/2, -0.5)
-        prevPointZero = DataPoint(0.0, 0.0)
+        val previousGraphPointPhaseOne = DataPoint(0.5,0.5)
+        val previousGraphPointPhaseTwo = DataPoint(-0.5,0.1)
+        val previousGraphPointPhaseThree = DataPoint(0.5,0.0)
+
+        var prevPointPhaseOnePos = DataPoint(0.0, 1.0)
+        val prevPointPhaseTwoPos = DataPoint(-sqrt(3.0)/2, -0.5)
+        val prevPointPhaseThreePos = DataPoint(sqrt(3.0)/2, -0.5)
+
+        var prevPointPhaseOneNeg = DataPoint(0.0, 1.0)
+        val prevPointPhaseTwoNeg = DataPoint(sqrt(3.0)/2, -0.5)
+        val prevPointPhaseThreeNeg = DataPoint(-sqrt(3.0)/2, -0.5)
+
+        var prevPointZero = DataPoint(0.0, 0.0)
 
         //Initialise text views
         vPhaseOneText.text = "A = ${previousGraphPointPhaseOne.x} + j${previousGraphPointPhaseOne.y}"
@@ -135,28 +76,28 @@ class MainActivity : AppCompatActivity() {
         vZeroText.text = "a0 = ${prevPointZero.x} + j${prevPointZero.y}"
 
         //Create phase series
-        phaseOneSeries = LineGraphSeries1()
-        phaseTwoSeries = LineGraphSeries1()
-        phaseThreeSeries = LineGraphSeries1()
+        val phaseOneSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
+        val phaseTwoSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
+        val phaseThreeSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), previousGraphPointPhaseOne)
         setupSeries(phaseTwoSeries, true, Color.BLUE, DataPoint(0.0, 0.0), previousGraphPointPhaseTwo)
         setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), previousGraphPointPhaseThree)
 
-        phaseOneSeriesPos = LineGraphSeries1()
-        phaseTwoSeriesPos = LineGraphSeries1()
-        phaseThreeSeriesPos = LineGraphSeries1()
+        val phaseOneSeriesPos: LineGraphSeries1<DataPoint> = LineGraphSeries1()
+        val phaseTwoSeriesPos: LineGraphSeries1<DataPoint> = LineGraphSeries1()
+        val phaseThreeSeriesPos: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         setupSeries(phaseOneSeriesPos, true, Color.GREEN, DataPoint(0.0, 0.0), prevPointPhaseOnePos)
         setupSeries(phaseTwoSeriesPos, true, Color.BLUE, DataPoint(0.0, 0.0), prevPointPhaseTwoPos)
         setupSeries(phaseThreeSeriesPos, true, Color.RED, DataPoint(0.0, 0.0), prevPointPhaseThreePos)
 
-        phaseOneSeriesNeg = LineGraphSeries1()
-        phaseTwoSeriesNeg = LineGraphSeries1()
-        phaseThreeSeriesNeg = LineGraphSeries1()
+        val phaseOneSeriesNeg: LineGraphSeries1<DataPoint> = LineGraphSeries1()
+        val phaseTwoSeriesNeg: LineGraphSeries1<DataPoint> = LineGraphSeries1()
+        val phaseThreeSeriesNeg: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         setupSeries(phaseOneSeriesNeg, true, Color.GREEN, DataPoint(0.0, 0.0), prevPointPhaseOneNeg)
         setupSeries(phaseTwoSeriesNeg, true, Color.BLUE, DataPoint(0.0, 0.0), prevPointPhaseTwoNeg)
         setupSeries(phaseThreeSeriesNeg, true, Color.RED, DataPoint(0.0, 0.0), prevPointPhaseThreeNeg)
 
-        zeroSeries = LineGraphSeries1()
+        val zeroSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         setupSeries(zeroSeries, true, Color.BLACK, DataPoint(0.0, 0.0), prevPointZero)
 
         //Add series to graph views
@@ -174,6 +115,29 @@ class MainActivity : AppCompatActivity() {
 
         vGraphZero.addSeries(zeroSeries)
 
+        //Setup graphs and viewports
+        val viewport = vGraph.viewport
+        makeGraph(viewport, vGraph)
+        val viewportPos = vGraphPos.viewport
+        makeGraph(viewportPos, vGraphPos)
+        val viewportNeg = vGraphNeg.viewport
+        makeGraph(viewportNeg, vGraphNeg)
+        val viewportZero = vGraphZero.viewport
+        makeGraph(viewportZero, vGraphZero)
+
+        val graphs = arrayOf(vGraph, vGraphPos, vGraphNeg, vGraphZero)
+        for (g in graphs) {
+            if (g == vGraph) {
+                setupGraph(g)
+            }
+            else {
+                setupGraph(g, GridLabelRenderer.GridStyle.BOTH,
+                    hasVerLabels = false,
+                    hasHorLabels = false
+                )
+            }
+        }
+
         //Variables to keep track of phase series selected by user
         val phaseSeriesArr = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries)
         val previousCoord = arrayOf(previousGraphPointPhaseOne, previousGraphPointPhaseTwo, previousGraphPointPhaseThree)
@@ -190,7 +154,7 @@ class MainActivity : AppCompatActivity() {
             seriesArrIndex = 2
         }
 
-        //Touch listener for graph view that updates series per user input
+        //Touch listeners for graph view that updates series per user input
         vGraph.setOnTouchListener { v, event ->
 
             val x: Double = event.x.toDouble()
@@ -264,103 +228,5 @@ class MainActivity : AppCompatActivity() {
                 series[i].resetData(arrayOf(values[0], values[1]))
             }*/
         }
-
-        viewport = vGraph.viewport
-        makeGraph(viewport, vGraph)
-        viewportPos = vGraphPos.viewport
-        makeGraph(viewportPos, vGraphPos)
-        viewportNeg = vGraphNeg.viewport
-        makeGraph(viewportNeg, vGraphNeg)
-        viewportZero = vGraphZero.viewport
-        makeGraph(viewportZero, vGraphZero)
-
-        val graphs = arrayOf(vGraph, vGraphPos, vGraphNeg, vGraphZero)
-        for (g in graphs) {
-            if (g == vGraph) {
-                setupGraph(g)
-            }
-            else {
-                setupGraph(g, GridLabelRenderer.GridStyle.BOTH, false, false)
-            }
-        }
     }
-
-
-
-
-
-    private fun setupGraph(graph: GraphView,
-                           graphLines: GridLabelRenderer.GridStyle = GridLabelRenderer.GridStyle.BOTH,
-                           hasVerLabels: Boolean = true,
-                           hasHorLabels: Boolean = true,
-                           highlightAxes: Boolean = true) {
-        graph.gridLabelRenderer.gridStyle = graphLines
-        graph.gridLabelRenderer.isVerticalLabelsVisible = hasVerLabels;
-        graph.gridLabelRenderer.isHorizontalLabelsVisible = hasHorLabels;
-        graph.gridLabelRenderer.isHighlightZeroLines = highlightAxes
-    }
-
-    //Define graph and viewport values
-    private fun makeGraph(viewport: Viewport, graph: GraphView) {
-        // Give x and y axes their range
-        graph.gridLabelRenderer.setHumanRounding(false)
-        viewport.isYAxisBoundsManual = true
-        viewport.isXAxisBoundsManual = true
-        viewport.setMinX(-1.0)
-        viewport.setMaxX(1.0)
-        viewport.setMinY(-1.0)
-        viewport.setMaxY(1.0)
-
-        val staticLabelsFormatter = StaticLabelsFormatter(graph)
-        staticLabelsFormatter.setHorizontalLabels(
-            arrayOf(
-                "-1.0",
-                "-0.8",
-                "-0.6",
-                "-0.4",
-                "-0.2",
-                "0.0",
-                "0.2",
-                "0.4",
-                "0.6",
-                "0.8",
-                "1.0"
-            )
-        )
-        staticLabelsFormatter.setVerticalLabels(
-            arrayOf(
-                "-1.0",
-                "-0.8",
-                "-0.6",
-                "-0.4",
-                "-0.2",
-                "0.0",
-                "0.2",
-                "0.4",
-                "0.6",
-                "0.8",
-                "1.0"
-            )
-        )
-    }
-
-    //Set variables in phase series
-    private fun setupSeries(series: LineGraphSeries1<DataPoint>, drawDataPoints: Boolean, colour: Int, dataPoint1: DataPoint, dataPoint2: DataPoint) {
-        series.isDrawDataPoints = drawDataPoints
-        series.color = colour
-        val dataPoints = orderData(dataPoint1, dataPoint2)
-
-        series.appendData(
-            dataPoints[0],
-            false,
-            100
-        )
-        series.appendData(
-            dataPoints[1],
-            false,
-            100
-        )
-    }
-
-
 }
