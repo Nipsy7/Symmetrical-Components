@@ -16,7 +16,7 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 
-@SuppressLint("SetTextI18n")
+//Update data points due to user input
 public fun moveDataPoint(x: Double,
                           y: Double,
                           event: MotionEvent,
@@ -40,7 +40,6 @@ public fun moveDataPoint(x: Double,
 
 
             val newDataPoint = DataPoint(prevPoint.x + dx, prevPoint.y - dy)
-            Log.i("zero", "prev newDataPoint: $newDataPoint")
             val values = orderData(DataPoint(0.0,0.0), newDataPoint)
             series.resetData(arrayOf(values[0], values[1]))
 
@@ -48,14 +47,24 @@ public fun moveDataPoint(x: Double,
                 moveAdditionalDataPoints(newDataPoint, series2, series3)
             }
 
-            textView.text = "a0 = ${BigDecimal(newDataPoint.x).setScale(4, RoundingMode.HALF_UP)}" +
-                    " + j${BigDecimal(newDataPoint.y).setScale(4, RoundingMode.HALF_UP)}"
-
-            Log.i("zero", "newDataPoint: $newDataPoint")
             return newDataPoint
         }
     }
     return prevPoint
+}
+
+@SuppressLint("SetTextI18n")
+public fun outputLocation(textView: TextView, prevPoint: DataPoint, seriesTag: String) {
+    textView.text = "$seriesTag = ${BigDecimal(prevPoint.x).setScale(4, RoundingMode.HALF_UP)}" +
+            " + j${BigDecimal(prevPoint.y).setScale(4, RoundingMode.HALF_UP)}"
+}
+
+//Gets the x and y location of the motionEvent
+public fun getEventLocation(event: MotionEvent) : Pair<Double, Double> {
+    val x: Double = event.x.toDouble()
+    val y: Double = event.y.toDouble()
+
+    return Pair(x,y)
 }
 
 //Move other series on the graph relative to the first series moved

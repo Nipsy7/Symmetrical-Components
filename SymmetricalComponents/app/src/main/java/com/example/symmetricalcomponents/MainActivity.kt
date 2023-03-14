@@ -68,12 +68,12 @@ class MainActivity : AppCompatActivity() {
         var prevPointZero = DataPoint(0.0, 0.0)
 
         //Initialise text views
-        vPhaseOneText.text = "A = ${previousGraphPointPhaseOne.x} + j${previousGraphPointPhaseOne.y}"
-        vPhaseTwoText.text = "A = ${previousGraphPointPhaseTwo.x} + j${previousGraphPointPhaseTwo.y}"
-        vPhaseThreeText.text = "A = ${previousGraphPointPhaseThree.x} + j${previousGraphPointPhaseThree.y}"
-        vPositiveText.text = "a1 = ${prevPointPhaseOnePos.x} + j${prevPointPhaseOnePos.y}"
-        vNegativeText.text = "a2 = ${prevPointPhaseOneNeg.x} + j${prevPointPhaseOneNeg.y}"
-        vZeroText.text = "a0 = ${prevPointZero.x} + j${prevPointZero.y}"
+        outputLocation(vPhaseOneText, previousGraphPointPhaseOne, "A")
+        outputLocation(vPhaseTwoText, previousGraphPointPhaseTwo, "B")
+        outputLocation(vPhaseThreeText, previousGraphPointPhaseThree, "C")
+        outputLocation(vPositiveText, prevPointPhaseOnePos, "a1")
+        outputLocation(vNegativeText, prevPointPhaseOneNeg, "a2")
+        outputLocation(vZeroText, prevPointZero, "a0")
 
         //Create phase series
         val phaseOneSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
@@ -157,66 +157,48 @@ class MainActivity : AppCompatActivity() {
         //Touch listeners for graph view that updates series per user input
         vGraph.setOnTouchListener { v, event ->
 
-            val x: Double = event.x.toDouble()
-            val y: Double = event.y.toDouble()
+            val xy = getEventLocation(event)
 
-            when (event?.action) {
-                MotionEvent.ACTION_MOVE -> {
-                    var dx: Double = x - previousX
-                    var dy: Double = y - previousY
+            previousCoord[seriesArrIndex] = moveDataPoint(xy.first, xy.second, event, previousX, previousY, previousCoord[seriesArrIndex], phaseSeriesArr[seriesArrIndex], null, null, vPhaseOneText, false, 0.002f)
+            outputLocation(vPhaseOneText, previousCoord[0], "A")
+            outputLocation(vPhaseTwoText, previousCoord[1], "A")
+            outputLocation(vPhaseThreeText, previousCoord[2], "A")
 
-                    dx*=0.002
-                    dy*=0.002
-
-                    val newDataPoint = DataPoint(previousCoord[seriesArrIndex].x + dx, previousCoord[seriesArrIndex].y - dy)
-                    val values = orderData(DataPoint(0.0, 0.0), newDataPoint)
-                    previousCoord[seriesArrIndex] = newDataPoint
-                    phaseSeriesArr[seriesArrIndex].resetData(arrayOf(values[0], values[1]))
-
-                    //Update text views
-                    vPhaseOneText.text = "A = ${BigDecimal(previousCoord[0].x).setScale(4, RoundingMode.HALF_UP)}" +
-                            " + j${BigDecimal(previousCoord[0].y).setScale(4, RoundingMode.HALF_UP)}"
-                    vPhaseTwoText.text = "B = ${BigDecimal(previousCoord[1].x).setScale(4, RoundingMode.HALF_UP)}" +
-                            " + j${BigDecimal(previousCoord[1].y).setScale(4, RoundingMode.HALF_UP)}"
-                    vPhaseThreeText.text = "C = ${BigDecimal(previousCoord[2].x).setScale(4, RoundingMode.HALF_UP)}" +
-                            " + j${BigDecimal(previousCoord[2].y).setScale(4, RoundingMode.HALF_UP)}"
-                }
-            }
-            previousX = x
-            previousY = y
+            previousX = xy.first
+            previousY = xy.second
             v?.onTouchEvent(event) ?: true
         }
 
         vGraphPos.setOnTouchListener { v, event ->
-            val x: Double = event.x.toDouble()
-            val y: Double = event.y.toDouble()
+            val xy = getEventLocation(event)
 
-            prevPointPhaseOnePos = moveDataPoint(x, y, event, previousXPos, previousYPos, prevPointPhaseOnePos, phaseOneSeriesPos, phaseTwoSeriesPos, phaseThreeSeriesPos, vPositiveText, true)
+            prevPointPhaseOnePos = moveDataPoint(xy.first, xy.second, event, previousXPos, previousYPos, prevPointPhaseOnePos, phaseOneSeriesPos, phaseTwoSeriesPos, phaseThreeSeriesPos, vPositiveText, true)
+            outputLocation(vPositiveText, prevPointPhaseOnePos, "a1")
 
-            previousXPos = x
-            previousYPos = y
+            previousXPos = xy.first
+            previousYPos = xy.second
             v?.onTouchEvent(event) ?: true
         }
 
         vGraphNeg.setOnTouchListener { v, event ->
-            val x: Double = event.x.toDouble()
-            val y: Double = event.y.toDouble()
+            val xy = getEventLocation(event)
 
-            prevPointPhaseOneNeg = moveDataPoint(x, y, event, previousXNeg, previousYNeg, prevPointPhaseOneNeg, phaseOneSeriesNeg, phaseTwoSeriesNeg, phaseThreeSeriesNeg, vNegativeText, true)
+            prevPointPhaseOneNeg = moveDataPoint(xy.first, xy.second, event, previousXNeg, previousYNeg, prevPointPhaseOneNeg, phaseOneSeriesNeg, phaseTwoSeriesNeg, phaseThreeSeriesNeg, vNegativeText, true)
+            outputLocation(vNegativeText, prevPointPhaseOneNeg, "a2")
 
-            previousXNeg = x
-            previousYNeg = y
+            previousXNeg = xy.first
+            previousYNeg = xy.second
             v?.onTouchEvent(event) ?: true
         }
 
         vGraphZero.setOnTouchListener { v, event ->
-            val x: Double = event.x.toDouble()
-            val y: Double = event.y.toDouble()
+            val xy = getEventLocation(event)
 
-            prevPointZero = moveDataPoint(x, y, event, previousXZero, previousYZero, prevPointZero, zeroSeries, null, null, vZeroText, false)
+            prevPointZero = moveDataPoint(xy.first, xy.second, event, previousXZero, previousYZero, prevPointZero, zeroSeries, null, null, vZeroText, false)
+            outputLocation(vZeroText, prevPointZero, "a0")
 
-            previousXZero = x
-            previousYZero = y
+            previousXZero = xy.first
+            previousYZero = xy.second
             v?.onTouchEvent(event) ?: true
         }
 
