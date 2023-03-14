@@ -95,7 +95,7 @@ public fun setupGraph(graph: GraphView,
                        graphLines: GridLabelRenderer.GridStyle = GridLabelRenderer.GridStyle.BOTH,
                        hasVerLabels: Boolean = true,
                        hasHorLabels: Boolean = true,
-                       highlightAxes: Boolean = true) {
+                       highlightAxes: Boolean = false) {
     graph.gridLabelRenderer.gridStyle = graphLines
     graph.gridLabelRenderer.isVerticalLabelsVisible = hasVerLabels;
     graph.gridLabelRenderer.isHorizontalLabelsVisible = hasHorLabels;

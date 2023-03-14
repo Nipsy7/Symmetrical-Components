@@ -4,18 +4,13 @@ import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.view.MotionEvent
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.jjoe64.graphview.GraphView
 import com.jjoe64.graphview.GridLabelRenderer
-import com.jjoe64.graphview.Viewport
-import com.jjoe64.graphview.helper.StaticLabelsFormatter
 import com.jjoe64.graphview.series.DataPoint
-import java.math.BigDecimal
-import java.math.RoundingMode
 import kotlin.math.sqrt
 import com.jjoe64.graphview.series.LineGraphSeries as LineGraphSeries1
 
@@ -53,24 +48,27 @@ class MainActivity : AppCompatActivity() {
         val vResetButton = findViewById<Button>(R.id.resetButton)
 
         //Define starting locations for phase series
-        val previousGraphPointPhaseOne = DataPoint(0.5,0.5)
-        val previousGraphPointPhaseTwo = DataPoint(-0.5,0.1)
-        val previousGraphPointPhaseThree = DataPoint(0.5,0.0)
+        val startGraphPointPhaseOne = DataPoint(0.0,0.5)
+        val startGraphPointPhaseTwo = DataPoint(-sqrt(3.0)/4, -0.25)
+        val startGraphPointPhaseThree = DataPoint(sqrt(3.0)/4, -0.25)
 
-        var prevPointPhaseOnePos = DataPoint(0.0, 1.0)
-        val prevPointPhaseTwoPos = DataPoint(-sqrt(3.0)/2, -0.5)
-        val prevPointPhaseThreePos = DataPoint(sqrt(3.0)/2, -0.5)
+        val startPointPhaseOnePos = DataPoint(0.0, 0.5)
+        var prevPointPhaseOnePos = startPointPhaseOnePos
+        val startPointPhaseTwoPos = DataPoint(-sqrt(3.0)/4, -0.25)
+        val startPointPhaseThreePos = DataPoint(sqrt(3.0)/4, -0.25)
 
-        var prevPointPhaseOneNeg = DataPoint(0.0, 1.0)
-        val prevPointPhaseTwoNeg = DataPoint(sqrt(3.0)/2, -0.5)
-        val prevPointPhaseThreeNeg = DataPoint(-sqrt(3.0)/2, -0.5)
+        val startPointPhaseOneNeg = DataPoint(0.0, 0.5)
+        var prevPointPhaseOneNeg = startPointPhaseOneNeg
+        val startPointPhaseTwoNeg = DataPoint(sqrt(3.0)/4, -0.25)
+        val startPointPhaseThreeNeg = DataPoint(-sqrt(3.0)/4, -0.25)
 
-        var prevPointZero = DataPoint(0.0, 0.0)
+        val startPointZero = DataPoint(0.0, 0.0)
+        var prevPointZero = startPointZero
 
         //Initialise text views
-        outputLocation(vPhaseOneText, previousGraphPointPhaseOne, "A")
-        outputLocation(vPhaseTwoText, previousGraphPointPhaseTwo, "B")
-        outputLocation(vPhaseThreeText, previousGraphPointPhaseThree, "C")
+        outputLocation(vPhaseOneText, startGraphPointPhaseOne, "A")
+        outputLocation(vPhaseTwoText, startGraphPointPhaseTwo, "B")
+        outputLocation(vPhaseThreeText, startGraphPointPhaseThree, "C")
         outputLocation(vPositiveText, prevPointPhaseOnePos, "a1")
         outputLocation(vNegativeText, prevPointPhaseOneNeg, "a2")
         outputLocation(vZeroText, prevPointZero, "a0")
@@ -79,23 +77,23 @@ class MainActivity : AppCompatActivity() {
         val phaseOneSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         val phaseTwoSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         val phaseThreeSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
-        setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), previousGraphPointPhaseOne)
-        setupSeries(phaseTwoSeries, true, Color.BLUE, DataPoint(0.0, 0.0), previousGraphPointPhaseTwo)
-        setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), previousGraphPointPhaseThree)
+        setupSeries(phaseOneSeries, true, Color.GREEN, DataPoint(0.0, 0.0), startGraphPointPhaseOne)
+        setupSeries(phaseTwoSeries, true, Color.BLUE, DataPoint(0.0, 0.0), startGraphPointPhaseTwo)
+        setupSeries(phaseThreeSeries, true, Color.RED, DataPoint(0.0,0.0), startGraphPointPhaseThree)
 
         val phaseOneSeriesPos: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         val phaseTwoSeriesPos: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         val phaseThreeSeriesPos: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         setupSeries(phaseOneSeriesPos, true, Color.GREEN, DataPoint(0.0, 0.0), prevPointPhaseOnePos)
-        setupSeries(phaseTwoSeriesPos, true, Color.BLUE, DataPoint(0.0, 0.0), prevPointPhaseTwoPos)
-        setupSeries(phaseThreeSeriesPos, true, Color.RED, DataPoint(0.0, 0.0), prevPointPhaseThreePos)
+        setupSeries(phaseTwoSeriesPos, true, Color.BLUE, DataPoint(0.0, 0.0), startPointPhaseTwoPos)
+        setupSeries(phaseThreeSeriesPos, true, Color.RED, DataPoint(0.0, 0.0), startPointPhaseThreePos)
 
         val phaseOneSeriesNeg: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         val phaseTwoSeriesNeg: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         val phaseThreeSeriesNeg: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         setupSeries(phaseOneSeriesNeg, true, Color.GREEN, DataPoint(0.0, 0.0), prevPointPhaseOneNeg)
-        setupSeries(phaseTwoSeriesNeg, true, Color.BLUE, DataPoint(0.0, 0.0), prevPointPhaseTwoNeg)
-        setupSeries(phaseThreeSeriesNeg, true, Color.RED, DataPoint(0.0, 0.0), prevPointPhaseThreeNeg)
+        setupSeries(phaseTwoSeriesNeg, true, Color.BLUE, DataPoint(0.0, 0.0), startPointPhaseTwoNeg)
+        setupSeries(phaseThreeSeriesNeg, true, Color.RED, DataPoint(0.0, 0.0), startPointPhaseThreeNeg)
 
         val zeroSeries: LineGraphSeries1<DataPoint> = LineGraphSeries1()
         setupSeries(zeroSeries, true, Color.BLACK, DataPoint(0.0, 0.0), prevPointZero)
@@ -140,7 +138,7 @@ class MainActivity : AppCompatActivity() {
 
         //Variables to keep track of phase series selected by user
         val phaseSeriesArr = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries)
-        val previousCoord = arrayOf(previousGraphPointPhaseOne, previousGraphPointPhaseTwo, previousGraphPointPhaseThree)
+        val previousCoord = arrayOf(startGraphPointPhaseOne, startGraphPointPhaseTwo, startGraphPointPhaseThree)
         var seriesArrIndex = 0
 
         //Listeners for user input on phase series
@@ -203,12 +201,19 @@ class MainActivity : AppCompatActivity() {
         }
 
         vResetButton.setOnClickListener {
-            /*val series = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries, phaseOneSeriesPos, phaseTwoSeriesPos, phaseThreeSeriesPos, phaseOneSeriesNeg, phaseTwoSeriesNeg, phaseThreeSeriesNeg, zeroSeries)
-            val startPoses = arrayOf(previousGraphPointPhaseOne, previousGraphPointPhaseTwo, previousGraphPointPhaseThree, prevPointPhaseOnePos, prevPointPhaseTwoPos, prevPointPhaseThreePos, prevPointPhaseOneNeg, prevPointPhaseTwoNeg, prevPointPhaseThreeNeg, prevPointZero)
-            for (i in 0..series.size) {
+            val series = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries, phaseOneSeriesPos, phaseTwoSeriesPos, phaseThreeSeriesPos, phaseOneSeriesNeg, phaseTwoSeriesNeg, phaseThreeSeriesNeg, zeroSeries)
+            val startPoses = arrayOf(startGraphPointPhaseOne, startGraphPointPhaseTwo, startGraphPointPhaseThree, startPointPhaseOnePos, startPointPhaseTwoPos, startPointPhaseThreePos, startPointPhaseOneNeg, startPointPhaseTwoNeg, startPointPhaseThreeNeg, startPointZero)
+            for (i in series.indices) {
                 val values = orderData(DataPoint(0.0, 0.0), startPoses[i])
                 series[i].resetData(arrayOf(values[0], values[1]))
-            }*/
+            }
+
+            previousCoord[0] = startGraphPointPhaseOne
+            previousCoord[1] = startGraphPointPhaseTwo
+            previousCoord[2] = startGraphPointPhaseThree
+            prevPointPhaseOnePos = startPointPhaseOnePos
+            prevPointPhaseOneNeg = startPointPhaseOneNeg
+            prevPointZero = startPointZero
         }
     }
 }
