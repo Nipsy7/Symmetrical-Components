@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.MotionEvent
+import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -58,6 +59,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var vNegativeText: TextView
     private lateinit var vZeroText: TextView
 
+    private lateinit var vResetButton: Button
+
     private lateinit var previousGraphPointPhaseOne: DataPoint
     private lateinit var previousGraphPointPhaseTwo: DataPoint
     private lateinit var previousGraphPointPhaseThree: DataPoint
@@ -109,6 +112,7 @@ class MainActivity : AppCompatActivity() {
         vPositiveText = findViewById(R.id.positiveText)
         vNegativeText = findViewById(R.id.negativeText)
         vZeroText = findViewById(R.id.zeroText)
+        vResetButton = findViewById(R.id.resetButton)
 
         //Define starting locations for phase series
         previousGraphPointPhaseOne = DataPoint(0.5,0.5)
@@ -192,40 +196,6 @@ class MainActivity : AppCompatActivity() {
             val x: Double = event.x.toDouble()
             val y: Double = event.y.toDouble()
 
-            /*when (event?.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    *//*val graphViewHeight = vGraph.graphContentHeight
-                    val graphViewWidth = vGraph.graphContentWidth
-
-                    val phaseOneRelVar = Pair(((previousCoord[0].x+100)/200), ((previousCoord[0].y+100)/200))
-                    val phaseTwoRelVar = Pair(((previousCoord[1].x+100)/200), ((previousCoord[1].y+100)/200))
-                    val phaseThreeRelVar = Pair(((previousCoord[2].x+100)/200), ((previousCoord[2].y+100)/200))
-
-                    graphViewLocation = Pair(vGraph.x, vGraph.y)*//*
-
-                    val phaseOneScreenPos = Pair((1080*(previousCoord[0].x+100))/200, ((952*(previousCoord[0].y+100))/200))
-                    val phaseTwoScreenPos = Pair((1080*(previousCoord[1].x+100))/200, ((952*(previousCoord[1].y+100))/200))
-                    val phaseThreeScreenPos = Pair((1080*(previousCoord[2].x+100))/200, ((952*(previousCoord[2].y+100))/200))
-                    val phaseScreenPosArr = arrayOf(phaseOneScreenPos, phaseTwoScreenPos, phaseThreeScreenPos)
-
-                    Log.i("pos", "phase one pos: $phaseOneScreenPos")
-                    Log.i("pos", "phase two pos: $phaseTwoScreenPos")
-                    Log.i("pos", "phase three pos: $phaseThreeScreenPos")
-
-                    var smallestDistance: Double? = null
-                    var i = 0
-                    for (a in phaseScreenPosArr) {
-                        val distance: Double = sqrt((a.first - x).pow(2)+(a.second - y).pow(2))
-                        Log.i("pos", "x: $x, y: $y, dist: $distance")
-                        if (smallestDistance == null || distance < smallestDistance) {
-                            smallestDistance = distance
-                            seriesArrIndex = i
-                            i+=1
-                        }
-                    }
-                }
-            }*/
-
             when (event?.action) {
                 MotionEvent.ACTION_MOVE -> {
                     var dx: Double = x - previousX
@@ -257,31 +227,8 @@ class MainActivity : AppCompatActivity() {
             val x: Double = event.x.toDouble()
             val y: Double = event.y.toDouble()
 
-            when (event?.action) {
-                MotionEvent.ACTION_MOVE -> {
-                    var dx: Double = x - previousXPos
-                    var dy: Double = y - previousYPos
+            prevPointPhaseOnePos = moveDataPoint(x, y, event, previousXPos, previousYPos, prevPointPhaseOnePos, phaseOneSeriesPos, phaseTwoSeriesPos, phaseThreeSeriesPos, vPositiveText, true)
 
-                    dx*=0.008
-                    dy*=0.008
-
-                    val newDataPoint = DataPoint(prevPointPhaseOnePos.x + dx, prevPointPhaseOnePos.y - dy)
-                    val values = orderData(DataPoint(0.0,0.0), newDataPoint)
-                    prevPointPhaseOnePos = newDataPoint
-                    phaseOneSeriesPos.resetData(arrayOf(values[0], values[1]))
-
-                    val newDataPoint2 = getDataPointAtAngle(newDataPoint, 2* PI/3)
-                    val values2 = orderData(DataPoint(0.0, 0.0), newDataPoint2)
-                    phaseTwoSeriesPos.resetData(arrayOf(values2[0], values2[1]))
-
-                    val newDataPoint3 = getDataPointAtAngle(newDataPoint, -2* PI/3)
-                    val values3 = orderData(DataPoint(0.0, 0.0), newDataPoint3)
-                    phaseThreeSeriesPos.resetData(arrayOf(values3[0], values3[1]))
-
-                    vPositiveText.text = "a1 = ${BigDecimal(prevPointPhaseOnePos.x).setScale(4, RoundingMode.HALF_UP)}" +
-                            " + j${BigDecimal(prevPointPhaseOnePos.y).setScale(4, RoundingMode.HALF_UP)}"
-                }
-            }
             previousXPos = x
             previousYPos = y
             v?.onTouchEvent(event) ?: true
@@ -291,31 +238,8 @@ class MainActivity : AppCompatActivity() {
             val x: Double = event.x.toDouble()
             val y: Double = event.y.toDouble()
 
-            when (event?.action) {
-                MotionEvent.ACTION_MOVE -> {
-                    var dx: Double = x - previousXNeg
-                    var dy: Double = y - previousYNeg
+            prevPointPhaseOneNeg = moveDataPoint(x, y, event, previousXNeg, previousYNeg, prevPointPhaseOneNeg, phaseOneSeriesNeg, phaseTwoSeriesNeg, phaseThreeSeriesNeg, vNegativeText, true)
 
-                    dx*=0.008
-                    dy*=0.008
-
-                    val newDataPoint = DataPoint(prevPointPhaseOneNeg.x + dx, prevPointPhaseOneNeg.y - dy)
-                    val values = orderData(DataPoint(0.0,0.0), newDataPoint)
-                    prevPointPhaseOneNeg = newDataPoint
-                    phaseOneSeriesNeg.resetData(arrayOf(values[0], values[1]))
-
-                    val newDataPoint2 = getDataPointAtAngle(newDataPoint, -2* PI/3)
-                    val values2 = orderData(DataPoint(0.0, 0.0), newDataPoint2)
-                    phaseTwoSeriesNeg.resetData(arrayOf(values2[0], values2[1]))
-
-                    val newDataPoint3 = getDataPointAtAngle(newDataPoint, 2* PI/3)
-                    val values3 = orderData(DataPoint(0.0, 0.0), newDataPoint3)
-                    phaseThreeSeriesNeg.resetData(arrayOf(values3[0], values3[1]))
-
-                    vNegativeText.text = "a2 = ${BigDecimal(prevPointPhaseOneNeg.x).setScale(4, RoundingMode.HALF_UP)}" +
-                            " + j${BigDecimal(prevPointPhaseOneNeg.y).setScale(4, RoundingMode.HALF_UP)}"
-                }
-            }
             previousXNeg = x
             previousYNeg = y
             v?.onTouchEvent(event) ?: true
@@ -325,26 +249,20 @@ class MainActivity : AppCompatActivity() {
             val x: Double = event.x.toDouble()
             val y: Double = event.y.toDouble()
 
-            when (event?.action) {
-                MotionEvent.ACTION_MOVE -> {
-                    var dx: Double = x - previousXZero
-                    var dy: Double = y - previousYZero
+            prevPointZero = moveDataPoint(x, y, event, previousXZero, previousYZero, prevPointZero, zeroSeries, null, null, vZeroText, false)
 
-                    dx*=0.008
-                    dy*=0.008
-
-                    val newDataPoint = DataPoint(prevPointZero.x + dx, prevPointZero.y - dy)
-                    val values = orderData(DataPoint(0.0,0.0), newDataPoint)
-                    prevPointZero = newDataPoint
-                    zeroSeries.resetData(arrayOf(values[0], values[1]))
-
-                    vZeroText.text = "a0 = ${BigDecimal(prevPointZero.x).setScale(4, RoundingMode.HALF_UP)}" +
-                            " + j${BigDecimal(prevPointZero.y).setScale(4, RoundingMode.HALF_UP)}"
-                }
-            }
             previousXZero = x
             previousYZero = y
             v?.onTouchEvent(event) ?: true
+        }
+
+        vResetButton.setOnClickListener {
+            /*val series = arrayOf(phaseOneSeries, phaseTwoSeries, phaseThreeSeries, phaseOneSeriesPos, phaseTwoSeriesPos, phaseThreeSeriesPos, phaseOneSeriesNeg, phaseTwoSeriesNeg, phaseThreeSeriesNeg, zeroSeries)
+            val startPoses = arrayOf(previousGraphPointPhaseOne, previousGraphPointPhaseTwo, previousGraphPointPhaseThree, prevPointPhaseOnePos, prevPointPhaseTwoPos, prevPointPhaseThreePos, prevPointPhaseOneNeg, prevPointPhaseTwoNeg, prevPointPhaseThreeNeg, prevPointZero)
+            for (i in 0..series.size) {
+                val values = orderData(DataPoint(0.0, 0.0), startPoses[i])
+                series[i].resetData(arrayOf(values[0], values[1]))
+            }*/
         }
 
         viewport = vGraph.viewport
@@ -367,9 +285,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getDataPointAtAngle(datapoint: DataPoint, angle: Double) : DataPoint {
-        return DataPoint(datapoint.x*cos(angle) - datapoint.y*sin(angle), datapoint.y*cos(angle) + datapoint.x*sin(angle))
-    }
+
+
+
 
     private fun setupGraph(graph: GraphView,
                            graphLines: GridLabelRenderer.GridStyle = GridLabelRenderer.GridStyle.BOTH,
@@ -444,11 +362,5 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    //Order phase series data (lowest x value must always come first)
-    private fun orderData(dataPoint1: DataPoint, dataPoint2: DataPoint): Array<DataPoint> {
-        if (dataPoint1.x > dataPoint2.x) {
-            return arrayOf(dataPoint2, dataPoint1)
-        }
-        return arrayOf(dataPoint1, dataPoint2)
-    }
+
 }
